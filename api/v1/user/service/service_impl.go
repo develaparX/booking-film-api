@@ -55,9 +55,9 @@ func (s *userService) Login(ctx context.Context, request dto.CreateUserRequest, 
 		Role:  request.Role,
 	}
 
-	_, err = s.Repo.FindByEmail(ctx, tx, request.Email, c)
-
 	var result entity.User
+	
+	result, err = s.Repo.FindByEmail(ctx, tx, request.Email, c)
 
 	if err != nil {
 		result, err = s.Repo.Save(ctx, tx, user, c)
@@ -74,6 +74,7 @@ func (s *userService) Login(ctx context.Context, request dto.CreateUserRequest, 
 		return UserResponse, err
 	}
 
+	user.ID = result.ID
 	user.Token = Token
 
 	user, err = s.Repo.Update(ctx, tx, user, c)

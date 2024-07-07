@@ -30,7 +30,7 @@ func main() {
 	genreroute.GenreRoute(router, validate, db, config)
 	movieroute.MovieRoute(router, validate, db, config)
 	genretomovieroute.GenreToMovieRoute(router, validate, db, config)
-	studioroute.StudioRoute(router, validate, db)
+	studioroute.StudioRoute(router, validate, db, config)
 	seatroute.SeatRoute(router, validate, db)
 
 	err := router.Run(":3000")

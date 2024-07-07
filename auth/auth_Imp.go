@@ -42,7 +42,7 @@ func (s *jwtService) GenerateToken(user entity.User, c *gin.Context) (string, er
 	return signedToken, nil
 }
 
-func (s *jwtService) ValidateToken(encodedToken string) (*jwt.Token, error) {
+func (s *jwtService) ValidateToken(encodedToken string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(encodedToken, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid token")
@@ -54,5 +54,9 @@ func (s *jwtService) ValidateToken(encodedToken string) (*jwt.Token, error) {
 		return nil, err
 	}
 
-	return token, nil
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		return claims, nil
+	}
+
+	return nil, errors.New("invalid token")
 }

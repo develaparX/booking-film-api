@@ -6,6 +6,7 @@ import (
 	"bioskuy/api/v1/user/service"
 	"bioskuy/auth"
 	"bioskuy/helper"
+	"bioskuy/middleware"
 	"database/sql"
 
 	"github.com/gin-gonic/gin"
@@ -28,8 +29,8 @@ func UserRoute(router *gin.Engine, validate *validator.Validate, db *sql.DB, con
 			users.GET("/google/callback", userController.CallbackFromGoogle)
 			users.GET("/:userId", userController.GetUserByID)
 			users.GET("/", userController.GetAllUsers)
-			users.PUT("/:userId", userController.UpdateUser)
-			users.DELETE("/:userId", userController.DeleteUser)
+			users.PUT("/:userId", middleware.AuthMiddleware(authService, "super admin"), userController.UpdateUser)
+			users.DELETE("/:userId", middleware.AuthMiddleware(authService, "super admin"), userController.DeleteUser)
 		}
 	}
 }

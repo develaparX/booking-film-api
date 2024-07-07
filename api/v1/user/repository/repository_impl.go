@@ -6,7 +6,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,6 +18,7 @@ func NewUserRepository() UserRepository {
 }
 
 func (r *userRepository) Save(ctx context.Context, tx *sql.Tx, user entity.User, c *gin.Context) (entity.User, error) {
+
 	query := "INSERT INTO users (name, email, token, role) VALUES ($1, $2, $3, $4) RETURNING id"
 
 	err := tx.QueryRowContext(ctx, query, user.Name, user.Email, user.Token, user.Role).Scan(&user.ID)
@@ -56,8 +56,6 @@ func (r *userRepository) FindByEmail(ctx context.Context, tx *sql.Tx, email stri
 }
 
 func (r *userRepository) FindByID(ctx context.Context, tx *sql.Tx, id string, c *gin.Context) (entity.User, error){
-
-	fmt.Println(id)
 
 	query := `SELECT id, name, email, token, role FROM users WHERE id = $1`
 	
