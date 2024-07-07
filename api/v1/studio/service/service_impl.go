@@ -1,6 +1,8 @@
 package service
 
 import (
+	entitySeat "bioskuy/api/v1/seat/entity"
+	repoSeat "bioskuy/api/v1/seat/repository"
 	"bioskuy/api/v1/studio/dto"
 	"bioskuy/api/v1/studio/entity"
 	"bioskuy/api/v1/studio/repository"
@@ -8,57 +10,95 @@ import (
 	"bioskuy/helper"
 	"context"
 	"database/sql"
+	"errors"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
 
-type userService struct {
-	Repo     repository.StudioRepository
+type studioService struct {
+	RepoStudio     repository.StudioRepository
+	RepoSeat     repoSeat.SeatRepository
 	Validate *validator.Validate
 	DB *sql.DB
 }
 
 
-func NewStudioService(repo repository.StudioRepository, validate *validator.Validate, DB *sql.DB) StudioService {
-	return &userService{Repo: repo, Validate: validate, DB: DB}
+func NewStudioService(RepoStudio repository.StudioRepository, validate *validator.Validate, DB *sql.DB, RepoSeat repoSeat.SeatRepository) StudioService {
+	return &studioService{RepoStudio: RepoStudio, Validate: validate, DB: DB, RepoSeat: RepoSeat}
 }
 
-func (s *userService) Create(ctx context.Context, request dto.CreateStudioRequest, c *gin.Context) (dto.StudioResponse, error) {
-	var StudioResponse = dto.StudioResponse{}
+func (s *studioService) Create(ctx context.Context, request dto.CreateStudioRequest, c *gin.Context) (dto.StudioResponse, error) {
+    var StudioResponse = dto.StudioResponse{}
 
-	err := s.Validate.Struct(request)
-	if err != nil {
-		c.Error(exception.ValidationError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-		return StudioResponse, err
-	}
+    err := s.Validate.Struct(request)
+    if err != nil {
+        c.Error(exception.ValidationError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+        return StudioResponse, err
+    }
 
-	tx, err := s.DB.Begin()
-	if err != nil {
-		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-		return StudioResponse, err
-	}
-	defer helper.CommitAndRollback(tx, c)
+    if request.MaxRowSeat == 0 {
+        err := errors.New("maxRowSeat tidak boleh nol")
+        c.Error(exception.ValidationError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+        return StudioResponse, err
+    }
 
-	studio := entity.Studio{
-		Name:  request.Name,
-		Capacity: request.Capacity,
-	}
+    numRows := (request.Capacity + request.MaxRowSeat - 1) / request.MaxRowSeat
+    if numRows > 26 {
+        err := errors.New("jumlah baris melebihi batas maksimal (26)")
+        c.Error(exception.ValidationError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+        return StudioResponse, err
+    }
 
-	result, err := s.Repo.Save(ctx, tx, studio, c)
-	if err != nil {
-		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-		return StudioResponse, err
-	}
+    tx, err := s.DB.Begin()
+    if err != nil {
+        c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+        return StudioResponse, err
+    }
+    defer helper.CommitAndRollback(tx, c)
 
-	StudioResponse.ID = result.ID
-	StudioResponse.Name = result.Name
-	StudioResponse.Capacity = result.Capacity
+    studio := entity.Studio{
+        Name:     request.Name,
+        Capacity: request.Capacity,
+    }
 
-	return StudioResponse, nil
+    result, err := s.RepoStudio.Save(ctx, tx, studio, c)
+    if err != nil {
+        c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+        return StudioResponse, err
+    }
+
+    for row := 0; row < numRows; row++ {
+        for seatNum := 1; seatNum <= request.MaxRowSeat; seatNum++ {
+            actualSeatNum := row*request.MaxRowSeat + seatNum
+            if actualSeatNum > request.Capacity {
+                break
+            }
+            seatName := string(rune('A'+row)) + "-" + fmt.Sprintf("%d", seatNum)
+
+            seat := entitySeat.Seat{
+                Name:       seatName,
+                IsAvailable: true,
+                StudioID:   result.ID,
+            }
+
+            _, err := s.RepoSeat.Save(ctx, tx, seat, c)
+            if err != nil {
+                c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+                return StudioResponse, err
+            }
+        }
+    }
+
+    StudioResponse.ID = result.ID
+    StudioResponse.Name = result.Name
+    StudioResponse.Capacity = result.Capacity
+
+    return StudioResponse, nil
 }
 
-func (s *userService) FindByID(ctx context.Context, id string, c *gin.Context) (dto.StudioResponse, error){
+func (s *studioService) FindByID(ctx context.Context, id string, c *gin.Context) (dto.StudioResponse, error){
 
 	StudioResponse := dto.StudioResponse{}
 
@@ -69,7 +109,7 @@ func (s *userService) FindByID(ctx context.Context, id string, c *gin.Context) (
 	}
 	defer helper.CommitAndRollback(tx, c)
 
-	result, err := s.Repo.FindByID(ctx, tx, id, c)
+	result, err := s.RepoStudio.FindByID(ctx, tx, id, c)
 	if err != nil {
 		c.Error(exception.NotFoundError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
 		return  StudioResponse, err
@@ -82,7 +122,7 @@ func (s *userService) FindByID(ctx context.Context, id string, c *gin.Context) (
 	return StudioResponse, nil
 }
 
-func (s *userService) FindAll(ctx context.Context, c *gin.Context) ([]dto.StudioResponse, error){
+func (s *studioService) FindAll(ctx context.Context, c *gin.Context) ([]dto.StudioResponse, error){
 	StudioResponses := []dto.StudioResponse{}
 
 	tx, err := s.DB.Begin()
@@ -92,7 +132,7 @@ func (s *userService) FindAll(ctx context.Context, c *gin.Context) ([]dto.Studio
 	}
 	defer helper.CommitAndRollback(tx, c)
 
-	result, err := s.Repo.FindAll(ctx, tx, c)
+	result, err := s.RepoStudio.FindAll(ctx, tx, c)
 	if err != nil {
 		c.Error(exception.NotFoundError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
 		return  StudioResponses, err
@@ -112,7 +152,7 @@ func (s *userService) FindAll(ctx context.Context, c *gin.Context) ([]dto.Studio
 	return StudioResponses, nil
 }
 
-func (s *userService) Update(ctx context.Context, request dto.UpdateStudioRequest, c *gin.Context) (dto.StudioResponse, error){
+func (s *studioService) Update(ctx context.Context, request dto.UpdateStudioRequest, c *gin.Context) (dto.StudioResponse, error){
 	StudioResponse := dto.StudioResponse{}
     var studio entity.Studio
 
@@ -143,7 +183,7 @@ func (s *userService) Update(ctx context.Context, request dto.UpdateStudioReques
 		studio.Name = request.Name
 	}
 
-    result, err := s.Repo.Update(ctx, tx, studio, c)
+    result, err := s.RepoStudio.Update(ctx, tx, studio, c)
 	if err != nil {
 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
 		return  StudioResponse, err
@@ -156,29 +196,31 @@ func (s *userService) Update(ctx context.Context, request dto.UpdateStudioReques
     return StudioResponse, nil
 }
 
-func (s *userService) Delete(ctx context.Context, id string, c *gin.Context) error{
-	studio := entity.Studio{}
+func (s *studioService) Delete(ctx context.Context, id string, c *gin.Context) error {
+    tx, err := s.DB.Begin()
+    if err != nil {
+        c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+        return err
+    }
+    defer helper.CommitAndRollback(tx, c)
 
-	tx, err := s.DB.Begin()
-	if err != nil {
-		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-		return err
-	}
-	defer helper.CommitAndRollback(tx, c)
+    studio, err := s.RepoStudio.FindByID(ctx, tx, id, c)
+    if err != nil {
+        c.Error(exception.NotFoundError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+        return err
+    }
 
-	resultUser, err := s.Repo.FindByID(ctx, tx, id, c)
-	if err != nil {
-		c.Error(exception.NotFoundError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-		return err
-	}
+    err = s.RepoSeat.Delete(ctx, tx, studio.ID, c)
+    if err != nil {
+        c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+        return err
+    }
 
-	studio.ID = resultUser.ID
+    err = s.RepoStudio.Delete(ctx, tx, studio.ID, c)
+    if err != nil {
+        c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+        return err
+    }
 
-	err = s.Repo.Delete(ctx, tx, id, c)
-	if err != nil {
-		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-		return err
-	}
-
-	return nil
+    return nil
 }
