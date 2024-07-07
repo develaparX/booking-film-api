@@ -48,7 +48,7 @@ func (s *seatService) FindByID(ctx context.Context, id string, c *gin.Context) (
 	return SeatResponse, nil
 }
 
-func (s *seatService) FindAll(ctx context.Context, c *gin.Context) ([]dto.SeatResponse, error){
+func (s *seatService) FindAll(ctx context.Context, id string, c *gin.Context) ([]dto.SeatResponse, error){
 	StudioResponses := []dto.SeatResponse{}
 
 	tx, err := s.DB.Begin()
@@ -58,7 +58,7 @@ func (s *seatService) FindAll(ctx context.Context, c *gin.Context) ([]dto.SeatRe
 	}
 	defer helper.CommitAndRollback(tx, c)
 
-	result, err := s.Repo.FindAll(ctx, tx, c)
+	result, err := s.Repo.FindAll(ctx, id, tx, c)
 	if err != nil {
 		c.Error(exception.NotFoundError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
 		return  StudioResponses, err

@@ -21,7 +21,7 @@ func SeatRoute(router *gin.Engine, validate *validator.Validate, db *sql.DB) {
 		seats := v1.Group("/seats")
 		{
 			seats.GET("/:seatId", seatController.FindById)
-			seats.GET("/", seatController.FindAll)
+			seats.GET("/studio/:studioId", seatController.FindAll)
 		}
 	}
 }

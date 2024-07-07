@@ -54,12 +54,12 @@ func (r *seatRepository) FindByID(ctx context.Context, tx *sql.Tx, id string, c 
 	}
 }
 
-func (r *seatRepository) FindAll(ctx context.Context, tx *sql.Tx, c *gin.Context) ([]entity.Seat, error){
+func (r *seatRepository) FindAll(ctx context.Context, id string, tx *sql.Tx, c *gin.Context) ([]entity.Seat, error){
 
-	query := `SELECT  id, seat_name, isAvailable, studio_id FROM seats`
+	query := `SELECT  id, seat_name, isAvailable, studio_id FROM seats WHERE studio_id = $1`
 
 	seats := []entity.Seat{}
-	rows, err := tx.QueryContext(ctx, query)
+	rows, err := tx.QueryContext(ctx, query, id)
 	if err != nil {
 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
 		return  seats, err
