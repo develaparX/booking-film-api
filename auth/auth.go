@@ -9,5 +9,5 @@ import (
 
 type Auth interface {
 	GenerateToken(user entity.User, c *gin.Context) (string, error)
-	ValidateToken(token string) (*jwt.Token, error)
+	ValidateToken(encodedToken string) (jwt.MapClaims, error)
 }
