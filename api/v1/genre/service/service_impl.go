@@ -15,6 +15,7 @@ type genreServiceImpl struct {
 func NewGenreService(repo repository.GenreRepository) GenreService {
 	return &genreServiceImpl{repo}
 }
+
 func (s *genreServiceImpl) GetAll(page int, size int) ([]entity.Genre, dto.Paging, error) {
 	return s.repo.GetAll(page, size)
 }

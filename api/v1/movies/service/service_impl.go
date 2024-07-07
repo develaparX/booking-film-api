@@ -1,6 +1,7 @@
 package service
 
 import (
+	"bioskuy/api/v1/genre/dto"
 	"bioskuy/api/v1/movies/entity"
 	"bioskuy/api/v1/movies/repository"
 
@@ -13,6 +14,9 @@ type movieServiceImpl struct {
 
 func NewMovieService(repo repository.MovieRepository) MovieService {
 	return &movieServiceImpl{repo: repo}
+}
+func (s *movieServiceImpl) GetAllMovies(page int, size int) ([]entity.Movie, dto.Paging, error) {
+	return s.repo.GetAll(page, size)
 }
 
 func (s *movieServiceImpl) CreateMovie(movie entity.Movie) (entity.Movie, error) {

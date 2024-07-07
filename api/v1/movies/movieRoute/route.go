@@ -1,4 +1,4 @@
-package route
+package movieroute
 
 import (
 	"bioskuy/api/v1/movies/controller"
@@ -10,7 +10,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-func UserRoute(router *gin.Engine, validate *validator.Validate, db *sql.DB, config interface{}) {
+func MovieRoute(router *gin.Engine, validate *validator.Validate, db *sql.DB, config interface{}) {
 	// Genre setup
 	movieRepo := repository.NewMovieRepository(db)
 	movieService := service.NewMovieService(movieRepo)
@@ -20,8 +20,9 @@ func UserRoute(router *gin.Engine, validate *validator.Validate, db *sql.DB, con
 		movieRoutes := v1.Group("/movies")
 		{
 			movieRoutes.POST("/", movieController.CreateMovie)
+			movieRoutes.GET("/", movieController.GetAllMovies)
 			movieRoutes.GET("/:id", movieController.GetMovie)
-			movieRoutes.PUT("/", movieController.UpdateMovie)
+			movieRoutes.PUT("/:id", movieController.UpdateMovie)
 			movieRoutes.DELETE("/:id", movieController.DeleteMovie)
 		}
 	}

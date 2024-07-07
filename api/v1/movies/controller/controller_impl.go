@@ -4,7 +4,9 @@ import (
 	"bioskuy/api/v1/movies/dto"
 	"bioskuy/api/v1/movies/entity"
 	"bioskuy/api/v1/movies/service"
+	"bioskuy/web"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -16,6 +18,33 @@ type movieControllerImpl struct {
 
 func NewMovieController(service service.MovieService) MovieController {
 	return &movieControllerImpl{Service: service}
+}
+
+func (ctrl *movieControllerImpl) GetAllMovies(c *gin.Context) {
+	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
+	if err != nil || page < 1 {
+		page = 1
+	}
+	size, err := strconv.Atoi(c.DefaultQuery("size", "10"))
+	if err != nil || size < 1 {
+		size = 10
+	}
+
+	movies, paging, err := ctrl.Service.GetAllMovies(page, size)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	response := web.FormatResponsePaging{
+		ResponseCode: http.StatusOK,
+		Data:         movies,
+		Paging: web.Paging{
+			Page:      paging.Page,
+			TotalData: paging.TotalRows,
+		},
+	}
+	c.JSON(http.StatusOK, response)
 }
 
 func (ctrl *movieControllerImpl) CreateMovie(c *gin.Context) {
