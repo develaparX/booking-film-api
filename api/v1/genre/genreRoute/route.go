@@ -1,4 +1,4 @@
-package route
+package genreroute
 
 import (
 	"bioskuy/api/v1/genre/controller"
@@ -10,7 +10,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-func UserRoute(router *gin.Engine, validate *validator.Validate, db *sql.DB, config interface{}) {
+func GenreRoute(router *gin.Engine, validate *validator.Validate, db *sql.DB, config interface{}) {
 	// Genre setup
 	genreRepo := repository.NewGenreRepository(db)
 	genreService := service.NewGenreService(genreRepo)
@@ -19,6 +19,7 @@ func UserRoute(router *gin.Engine, validate *validator.Validate, db *sql.DB, con
 	{
 		genre := v1.Group("/genre")
 		{
+			genre.GET("/", genreController.GetAll)
 			genre.POST("/", genreController.CreateGenre)
 			genre.GET("/:id", genreController.GetGenre)
 			genre.PUT("/:id", genreController.UpdateGenre)
