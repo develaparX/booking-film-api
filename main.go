@@ -1,6 +1,9 @@
 package main
 
 import (
+	genreroute "bioskuy/api/v1/genre/route"
+	genretomovieroute "bioskuy/api/v1/genretomovie/route"
+	movieroute "bioskuy/api/v1/movies/route"
 	"bioskuy/api/v1/user/route"
 	"bioskuy/app"
 	"bioskuy/exception"
@@ -10,22 +13,25 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-	func main() {
+func main() {
 
-		var c *gin.Context
-		router := gin.Default()
-		validate := validator.New()
-		config := helper.NewConfig(c)
-		db := app.GetConnection(config)
-		defer db.Close()
+	var c *gin.Context
+	router := gin.Default()
+	validate := validator.New()
+	config := helper.NewConfig(c)
+	db := app.GetConnection(config)
+	defer db.Close()
 
-		router.Use(exception.ErrorHandler)
-		
-		route.UserRoute(router, validate, db, config)
-		
-		err := router.Run(":3000")
-		if err != nil {
-			c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-			return
-		}
+	router.Use(exception.ErrorHandler)
+
+	route.UserRoute(router, validate, db, config)
+	genreroute.GenreRoute(router, validate, db, config)
+	movieroute.MovieRoute(router, validate, db, config)
+	genretomovieroute.GenreToMovieRoute(router, validate, db, config)
+
+	err := router.Run(":3000")
+	if err != nil {
+		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+		return
 	}
+}
