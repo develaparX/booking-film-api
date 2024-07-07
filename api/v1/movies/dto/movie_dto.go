@@ -11,12 +11,11 @@ type CreateMovieDTO struct {
 }
 
 type UpdateMovieDTO struct {
-	ID          uuid.UUID `json:"id" binding:"required"`
-	Title       string    `json:"title" binding:"required"`
-	Description string    `json:"description" binding:"required"`
-	Price       int       `json:"price" binding:"required"`
-	Duration    int       `json:"duration" binding:"required"`
-	Status      string    `json:"status" binding:"required"`
+	Title       string `json:"title" binding:"required"`
+	Description string `json:"description" binding:"required"`
+	Price       int    `json:"price" binding:"required"`
+	Duration    int    `json:"duration" binding:"required"`
+	Status      string `json:"status" binding:"required"`
 }
 
 type MovieResponseDTO struct {
