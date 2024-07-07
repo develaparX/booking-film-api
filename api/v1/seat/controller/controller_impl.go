@@ -37,8 +37,9 @@ func (controller *seatControllerImpl) FindById(c *gin.Context){
 
 func (controller *seatControllerImpl) FindAll(c *gin.Context) {
     ctx := c.Request.Context()
+	id := c.Param("studioId")
 
-    result, err := controller.seatService.FindAll(ctx, c)
+    result, err := controller.seatService.FindAll(ctx, id, c)
     if err != nil {
         c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
         return
