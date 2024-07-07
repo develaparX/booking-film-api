@@ -4,6 +4,7 @@ import (
 	genreroute "bioskuy/api/v1/genre/route"
 	genretomovieroute "bioskuy/api/v1/genretomovie/route"
 	movieroute "bioskuy/api/v1/movies/route"
+	studioroute "bioskuy/api/v1/studio/route"
 	"bioskuy/api/v1/user/route"
 	"bioskuy/app"
 	"bioskuy/exception"
@@ -28,6 +29,7 @@ func main() {
 	genreroute.GenreRoute(router, validate, db, config)
 	movieroute.MovieRoute(router, validate, db, config)
 	genretomovieroute.GenreToMovieRoute(router, validate, db, config)
+	studioroute.StudioRoute(router, validate, db)
 
 	err := router.Run(":3000")
 	if err != nil {
