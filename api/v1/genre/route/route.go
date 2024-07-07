@@ -17,7 +17,7 @@ func GenreRoute(router *gin.Engine, validate *validator.Validate, db *sql.DB, co
 	genreController := controller.NewGenreController(genreService)
 	v1 := router.Group("/api/v1")
 	{
-		genre := v1.Group("/genre")
+		genre := v1.Group("/genres")
 		{
 			genre.GET("/", genreController.GetAll)
 			genre.POST("/", genreController.CreateGenre)
