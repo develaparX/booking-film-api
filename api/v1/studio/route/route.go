@@ -1,6 +1,7 @@
 package route
 
 import (
+	repoSeat "bioskuy/api/v1/seat/repository"
 	"bioskuy/api/v1/studio/controller"
 	"bioskuy/api/v1/studio/repository"
 	"bioskuy/api/v1/studio/service"
@@ -12,8 +13,10 @@ import (
 
 func StudioRoute(router *gin.Engine, validate *validator.Validate, db *sql.DB) {
 	
+	seatRepo := repoSeat.NewSeatRepository()
+
 	studioRepo := repository.NewStudioRepository()
-	studioService := service.NewStudioService(studioRepo, validate, db)
+	studioService := service.NewStudioService(studioRepo, validate, db, seatRepo)
 	studioController := controller.NewStudioController(studioService)
 
 	v1 := router.Group("/api/v1")
