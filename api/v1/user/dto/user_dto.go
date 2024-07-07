@@ -7,8 +7,8 @@ type CreateUserRequest struct {
 }
 
 type UpdateUserRequest struct {
-	Name  string `json:"name" validate:"required"`
-	Email string `json:"email" validate:"required,email"`
+	ID   string `json:"id"`
+	Role string `json:"role" validate:"required"`
 }
 
 type UserResponse struct {

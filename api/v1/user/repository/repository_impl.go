@@ -6,6 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,14 +18,13 @@ func NewUserRepository() UserRepository {
 	return &userRepository{}
 }
 
-func (r *userRepository) Save(ctx context.Context, tx *sql.Tx, user entity.User, c *gin.Context) (entity.User, error){
-
-	query := `INSERT INTO users (name, email, token, role) VALUES ($1, $2, $3, $4, $5) RETURNING id`
+func (r *userRepository) Save(ctx context.Context, tx *sql.Tx, user entity.User, c *gin.Context) (entity.User, error) {
+	query := "INSERT INTO users (name, email, token, role) VALUES ($1, $2, $3, $4) RETURNING id"
 
 	err := tx.QueryRowContext(ctx, query, user.Name, user.Email, user.Token, user.Role).Scan(&user.ID)
 	if err != nil {
 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-		return  user, err
+		return user, err
 	}
 
 	return user, nil
@@ -36,6 +36,33 @@ func (r *userRepository) FindByEmail(ctx context.Context, tx *sql.Tx, email stri
 	
 	user := entity.User{}
 	rows, err := tx.QueryContext(ctx, query, email)
+	if err != nil {
+		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+		return  user, err
+	}
+	defer rows.Close()
+
+	if rows.Next(){
+		err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.Token, &user.Role,)
+		if err != nil {
+			c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+			return  user, err
+		}
+
+		return user, nil
+	}else{
+		return user, errors.New("user not found")
+	}
+}
+
+func (r *userRepository) FindByID(ctx context.Context, tx *sql.Tx, id string, c *gin.Context) (entity.User, error){
+
+	fmt.Println(id)
+
+	query := `SELECT id, name, email, token, role FROM users WHERE id = $1`
+	
+	user := entity.User{}
+	rows, err := tx.QueryContext(ctx, query, id)
 	if err != nil {
 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
 		return  user, err
@@ -91,10 +118,10 @@ func (r *userRepository) Update(ctx context.Context, tx *sql.Tx, user entity.Use
 	return user, nil
 }
 
-func (r *userRepository) Delete(ctx context.Context, tx *sql.Tx, email string, c *gin.Context) error{
-	query := `DELETE FROM users WHERE email = $1`
+func (r *userRepository) Delete(ctx context.Context, tx *sql.Tx, id string, c *gin.Context) error{
+	query := `DELETE FROM users WHERE id = $1`
 
-	_, err := tx.ExecContext(ctx, query, email)
+	_, err := tx.ExecContext(ctx, query, id)
 
 	if err != nil {
 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
