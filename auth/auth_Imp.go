@@ -36,7 +36,7 @@ func (s *jwtService) GenerateToken(user entity.User, c *gin.Context) (string, er
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 	signedToken, err := token.SignedString([]byte(s.Env.SecretKey))
 	if err != nil {
-		return "", err
+		panic(err)
 	}
 
 	return signedToken, nil
