@@ -27,8 +27,8 @@ func NewGenreToMovieService(repo repository.GenreToMovieRepository, validate *va
 	}
 }
 
-func (s *genretomovieServiceImpl) Create(ctx context.Context, request dto.CreateGenreToMovieRequest, c *gin.Context) (dto.GenreToMovieResponse, error) {
-	var GenretomovieResponse = dto.GenreToMovieResponse{}
+func (s *genretomovieServiceImpl) Create(ctx context.Context, request dto.CreateGenreToMovieRequest, c *gin.Context) (dto.GenreToMovieCreateResponse, error) {
+	var GenretomovieResponse = dto.GenreToMovieCreateResponse{}
 
 	err := s.Validate.Struct(request)
 	if err != nil {
@@ -63,7 +63,6 @@ func (s *genretomovieServiceImpl) Create(ctx context.Context, request dto.Create
 }
 
 func (s *genretomovieServiceImpl) FindByID(ctx context.Context, id string, c *gin.Context) (dto.GenreToMovieResponse, error){
-
 	GenreToMovieResponse := dto.GenreToMovieResponse{}
 
 	tx, err := s.DB.Begin()
@@ -82,6 +81,12 @@ func (s *genretomovieServiceImpl) FindByID(ctx context.Context, id string, c *gi
 	GenreToMovieResponse.ID = result.ID
 	GenreToMovieResponse.GenreID = result.GenreID
 	GenreToMovieResponse.MovieID = result.MovieID
+	GenreToMovieResponse.GenreName = result.GenreName
+	GenreToMovieResponse.MovieTitle = result.MovieTitle
+	GenreToMovieResponse.MovieDescription = result.MovieDescription
+	GenreToMovieResponse.MoviePrice = result.MoviePrice
+	GenreToMovieResponse.MovieDuration = result.MovieDuration
+	GenreToMovieResponse.MovieStatus = result.MovieStatus
 
 	return GenreToMovieResponse, nil
 }
@@ -96,21 +101,25 @@ func (s *genretomovieServiceImpl) FindAll(ctx context.Context, c *gin.Context) (
 	}
 	defer helper.CommitAndRollback(tx, c)
 
-	result, err := s.Repo.FindAll(ctx, tx, c)
+	results, err := s.Repo.FindAll(ctx, tx, c)
 	if err != nil {
 		c.Error(exception.NotFoundError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
 		return  GenreToMovieResponses, err
 	}
 
-	for _, genretomovie := range result {
-		GenretomovieResponse := dto.GenreToMovieResponse{}
-
-		GenretomovieResponse.ID = genretomovie.ID
-		GenretomovieResponse.GenreID = genretomovie.GenreID
-		GenretomovieResponse.MovieID = genretomovie.MovieID
-
-		GenreToMovieResponses = append(GenreToMovieResponses, GenretomovieResponse)
-		
+	for _, result := range results {
+		GenreToMovieResponse := dto.GenreToMovieResponse{
+			ID: result.ID,
+			GenreID: result.GenreID,
+			MovieID: result.MovieID,
+			GenreName: result.GenreName,
+			MovieTitle: result.MovieTitle,
+			MovieDescription: result.MovieDescription,
+			MoviePrice: result.MoviePrice,
+			MovieDuration: result.MovieDuration,
+			MovieStatus: result.MovieStatus,
+		}
+		GenreToMovieResponses = append(GenreToMovieResponses, GenreToMovieResponse)
 	}
 
 	return GenreToMovieResponses, nil
