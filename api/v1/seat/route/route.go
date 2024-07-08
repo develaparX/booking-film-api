@@ -12,7 +12,7 @@ import (
 
 func SeatRoute(router *gin.Engine, validate *validator.Validate, db *sql.DB) {
 	
-	seatRepo := repository.NewSeatRepository()
+	seatRepo := repository.NewSeatRepository(db)
 	seatService := service.NewSeatervice(seatRepo, validate, db)
 	seatController := controller.NewSeatController(seatService)
 
