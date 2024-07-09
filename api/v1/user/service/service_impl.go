@@ -18,16 +18,15 @@ import (
 type userService struct {
 	Repo     repository.UserRepository
 	Validate *validator.Validate
-	DB *sql.DB
-	Jwt auth.Auth
+	DB       *sql.DB
+	Jwt      auth.Auth
 }
-
 
 func NewUserService(repo repository.UserRepository, validate *validator.Validate, DB *sql.DB, jwt auth.Auth) UserService {
 	return &userService{Repo: repo, Validate: validate, DB: DB, Jwt: jwt}
 }
 
-func(s *userService) GoogleLoginHandler() {
+func (s *userService) GoogleLoginHandler() {
 	url := auth.GetGoogleLoginURL("state")
 
 	fmt.Println(url)
@@ -56,7 +55,7 @@ func (s *userService) Login(ctx context.Context, request dto.CreateUserRequest, 
 	}
 
 	var result entity.User
-	
+
 	result, err = s.Repo.FindByEmail(ctx, tx, request.Email, c)
 
 	if err != nil {
@@ -65,7 +64,7 @@ func (s *userService) Login(ctx context.Context, request dto.CreateUserRequest, 
 			c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
 			return UserResponse, err
 		}
-		
+
 	}
 
 	Token, err := s.Jwt.GenerateToken(result, c)
@@ -88,21 +87,21 @@ func (s *userService) Login(ctx context.Context, request dto.CreateUserRequest, 
 	return UserResponse, nil
 }
 
-func (s *userService) FindByEmail(ctx context.Context, email string, c *gin.Context) (dto.UserResponse, error){
+func (s *userService) FindByEmail(ctx context.Context, email string, c *gin.Context) (dto.UserResponse, error) {
 
 	UserResponse := dto.UserResponse{}
 
 	tx, err := s.DB.Begin()
 	if err != nil {
 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-		return  UserResponse, err
+		return UserResponse, err
 	}
 	defer helper.CommitAndRollback(tx, c)
 
 	result, err := s.Repo.FindByEmail(ctx, tx, email, c)
 	if err != nil {
 		c.Error(exception.NotFoundError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-		return  UserResponse, err
+		return UserResponse, err
 	}
 
 	UserResponse.ID = result.ID
@@ -113,22 +112,21 @@ func (s *userService) FindByEmail(ctx context.Context, email string, c *gin.Cont
 	return UserResponse, nil
 }
 
-
-func (s *userService) FindByID(ctx context.Context, id string, c *gin.Context) (dto.UserResponse, error){
+func (s *userService) FindByID(ctx context.Context, id string, c *gin.Context) (dto.UserResponse, error) {
 
 	UserResponse := dto.UserResponse{}
 
 	tx, err := s.DB.Begin()
 	if err != nil {
 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-		return  UserResponse, err
+		return UserResponse, err
 	}
 	defer helper.CommitAndRollback(tx, c)
 
 	result, err := s.Repo.FindByID(ctx, tx, id, c)
 	if err != nil {
 		c.Error(exception.NotFoundError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-		return  UserResponse, err
+		return UserResponse, err
 	}
 
 	UserResponse.ID = result.ID
@@ -139,20 +137,20 @@ func (s *userService) FindByID(ctx context.Context, id string, c *gin.Context) (
 	return UserResponse, nil
 }
 
-func (s *userService) FindAll(ctx context.Context, c *gin.Context) ([]dto.UserResponse, error){
+func (s *userService) FindAll(ctx context.Context, c *gin.Context) ([]dto.UserResponse, error) {
 	UserResponses := []dto.UserResponse{}
 
 	tx, err := s.DB.Begin()
 	if err != nil {
 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-		return  UserResponses, err
+		return UserResponses, err
 	}
 	defer helper.CommitAndRollback(tx, c)
 
 	result, err := s.Repo.FindAll(ctx, tx, c)
 	if err != nil {
 		c.Error(exception.NotFoundError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-		return  UserResponses, err
+		return UserResponses, err
 	}
 
 	for _, category := range result {
@@ -164,57 +162,57 @@ func (s *userService) FindAll(ctx context.Context, c *gin.Context) ([]dto.UserRe
 		UserResponse.Role = category.Role
 
 		UserResponses = append(UserResponses, UserResponse)
-		
+
 	}
 
 	return UserResponses, nil
 }
 
-func (s *userService) Update(ctx context.Context, request dto.UpdateUserRequest, c *gin.Context) (dto.UserResponse, error){
+func (s *userService) Update(ctx context.Context, request dto.UpdateUserRequest, c *gin.Context) (dto.UserResponse, error) {
 	UserResponse := dto.UserResponse{}
-    var user entity.User
+	var user entity.User
 
-    err := s.Validate.Struct(request)
-    if err != nil {
+	err := s.Validate.Struct(request)
+	if err != nil {
 		c.Error(exception.ValidationError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-		return  UserResponse, err
+		return UserResponse, err
 	}
 
-    resultCustomer, err := s.FindByID(ctx, request.ID, c)
-    if err != nil {
+	resultCustomer, err := s.FindByID(ctx, request.ID, c)
+	if err != nil {
 		c.Error(exception.NotFoundError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-		return  UserResponse, err
+		return UserResponse, err
 	}
 
-    tx, err := s.DB.Begin()
-    if err != nil {
+	tx, err := s.DB.Begin()
+	if err != nil {
 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-		return  UserResponse, err
+		return UserResponse, err
 	}
-    defer helper.CommitAndRollback(tx, c)
+	defer helper.CommitAndRollback(tx, c)
 
-    user.ID = resultCustomer.ID
+	user.ID = resultCustomer.ID
 	user.Role = resultCustomer.Role
 
 	if request.Role != "" {
 		user.Role = request.Role
 	}
 
-    result, err := s.Repo.Update(ctx, tx, user, c)
+	result, err := s.Repo.Update(ctx, tx, user, c)
 	if err != nil {
 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-		return  UserResponse, err
+		return UserResponse, err
 	}
 
-    UserResponse.ID = result.ID
+	UserResponse.ID = result.ID
 	UserResponse.Name = resultCustomer.Name
 	UserResponse.Email = resultCustomer.Email
 	UserResponse.Role = result.Role
 
-    return UserResponse, nil
+	return UserResponse, nil
 }
 
-func (s *userService) Delete(ctx context.Context, id string, c *gin.Context) error{
+func (s *userService) Delete(ctx context.Context, id string, c *gin.Context) error {
 	customer := entity.User{}
 
 	tx, err := s.DB.Begin()
