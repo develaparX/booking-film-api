@@ -33,7 +33,7 @@ func (suite *SeatServiceTestSuite) SetupTest() {
 	db, sqlMock, _ := sqlmock.New()
 	suite.db = db
 	suite.sqlMock = sqlMock
-	suite.service = &seatService{Validate: validate, DB: db}
+	suite.service = &seatService{Repo: suite.mockRepo, Validate: validate, DB: db}
 }
 
 func (suite *SeatServiceTestSuite) TearDownTest() {
