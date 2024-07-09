@@ -28,7 +28,7 @@ func GenreRoute(router *gin.Engine, validate *validator.Validate, db *sql.DB, co
 			genre.POST("/", middleware.AuthMiddleware(authService, "admin"), genreController.CreateGenre)
 			genre.GET("/:id", genreController.GetGenre)
 			genre.PUT("/:id", middleware.AuthMiddleware(authService, "admin"), genreController.UpdateGenre)
-			genre.DELETE("/:id",middleware.AuthMiddleware(authService, "admin"), genreController.DeleteGenre)
+			genre.DELETE("/:id", middleware.AuthMiddleware(authService, "admin"), genreController.DeleteGenre)
 		}
 	}
 }

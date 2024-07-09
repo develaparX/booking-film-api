@@ -1,0 +1,25 @@
+mode: set
+bioskuy/api/v1/genre/repository/repository_impl.go:18.53,22.2 1 1
+bioskuy/api/v1/genre/repository/repository_impl.go:24.94,30.16 4 1
+bioskuy/api/v1/genre/repository/repository_impl.go:30.16,32.3 1 1
+bioskuy/api/v1/genre/repository/repository_impl.go:33.2,37.16 4 1
+bioskuy/api/v1/genre/repository/repository_impl.go:37.16,39.3 1 1
+bioskuy/api/v1/genre/repository/repository_impl.go:41.2,41.18 1 1
+bioskuy/api/v1/genre/repository/repository_impl.go:41.18,45.17 3 1
+bioskuy/api/v1/genre/repository/repository_impl.go:45.17,47.4 1 1
+bioskuy/api/v1/genre/repository/repository_impl.go:48.3,48.37 1 1
+bioskuy/api/v1/genre/repository/repository_impl.go:51.2,57.30 2 1
+bioskuy/api/v1/genre/repository/repository_impl.go:60.80,68.16 4 1
+bioskuy/api/v1/genre/repository/repository_impl.go:68.16,71.3 2 1
+bioskuy/api/v1/genre/repository/repository_impl.go:72.2,72.19 1 1
+bioskuy/api/v1/genre/repository/repository_impl.go:75.75,83.16 4 1
+bioskuy/api/v1/genre/repository/repository_impl.go:83.16,84.27 1 1
+bioskuy/api/v1/genre/repository/repository_impl.go:84.27,87.4 2 1
+bioskuy/api/v1/genre/repository/repository_impl.go:88.3,88.29 1 1
+bioskuy/api/v1/genre/repository/repository_impl.go:90.2,90.19 1 1
+bioskuy/api/v1/genre/repository/repository_impl.go:93.80,98.16 2 1
+bioskuy/api/v1/genre/repository/repository_impl.go:98.16,100.3 1 1
+bioskuy/api/v1/genre/repository/repository_impl.go:101.2,101.19 1 1
+bioskuy/api/v1/genre/repository/repository_impl.go:104.74,112.16 4 1
+bioskuy/api/v1/genre/repository/repository_impl.go:112.16,115.3 2 1
+bioskuy/api/v1/genre/repository/repository_impl.go:116.2,116.19 1 1
