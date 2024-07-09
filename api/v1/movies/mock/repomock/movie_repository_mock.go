@@ -4,7 +4,6 @@ import (
 	"bioskuy/api/v1/genre/dto"
 	"bioskuy/api/v1/movies/entity"
 
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -22,7 +21,7 @@ func (m *MockMovieRepository) Create(movie entity.Movie) (entity.Movie, error) {
 	return args.Get(0).(entity.Movie), args.Error(1)
 }
 
-func (m *MockMovieRepository) GetByID(id uuid.UUID) (entity.Movie, error) {
+func (m *MockMovieRepository) GetByID(id string) (entity.Movie, error) {
 	args := m.Called(id)
 	return args.Get(0).(entity.Movie), args.Error(1)
 }
@@ -32,7 +31,7 @@ func (m *MockMovieRepository) Update(movie entity.Movie) (entity.Movie, error) {
 	return args.Get(0).(entity.Movie), args.Error(1)
 }
 
-func (m *MockMovieRepository) Delete(id uuid.UUID) (entity.Movie, error) {
+func (m *MockMovieRepository) Delete(id string) (entity.Movie, error) {
 	args := m.Called(id)
 	return args.Get(0).(entity.Movie), args.Error(1)
 }

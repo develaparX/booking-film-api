@@ -13,7 +13,6 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
@@ -26,7 +25,7 @@ type MovieControllerTestSuite struct {
 }
 
 var mockingMovie = entity.Movie{
-	ID:          uuid.New(),
+	ID:          "1",
 	Title:       "The Matrix",
 	Description: "A sci-fi action film",
 	Price:       12,
@@ -143,7 +142,7 @@ func (suite *MovieControllerTestSuite) TestCreateMovie_Error() {
 func (suite *MovieControllerTestSuite) TestGetMovie_Success() {
 	suite.mockService.On("GetMovieByID", mockingMovie.ID).Return(mockingMovie, nil)
 
-	req, _ := http.NewRequest(http.MethodGet, "/api/v1/movies/"+mockingMovie.ID.String(), nil)
+	req, _ := http.NewRequest(http.MethodGet, "/api/v1/movies/"+mockingMovie.ID, nil)
 	resp := httptest.NewRecorder()
 	suite.router.ServeHTTP(resp, req)
 
@@ -166,7 +165,7 @@ func (suite *MovieControllerTestSuite) TestGetMovie_InvalidID() {
 func (suite *MovieControllerTestSuite) TestGetMovie_Error() {
 	suite.mockService.On("GetMovieByID", mockingMovie.ID).Return(entity.Movie{}, errors.New("error fetching movie"))
 
-	req, _ := http.NewRequest(http.MethodGet, "/api/v1/movies/"+mockingMovie.ID.String(), nil)
+	req, _ := http.NewRequest(http.MethodGet, "/api/v1/movies/"+mockingMovie.ID, nil)
 	resp := httptest.NewRecorder()
 	suite.router.ServeHTTP(resp, req)
 
@@ -193,7 +192,7 @@ func (suite *MovieControllerTestSuite) TestUpdateMovie_Success() {
 	suite.mockService.On("UpdateMovie", updatedMovie).Return(updatedMovie, nil)
 
 	body, _ := json.Marshal(updateDTO)
-	req, _ := http.NewRequest(http.MethodPut, "/api/v1/movies/"+mockingMovie.ID.String(), bytes.NewBuffer(body))
+	req, _ := http.NewRequest(http.MethodPut, "/api/v1/movies/"+mockingMovie.ID, bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
 	resp := httptest.NewRecorder()
 	suite.router.ServeHTTP(resp, req)
@@ -229,7 +228,7 @@ func (suite *MovieControllerTestSuite) TestUpdateMovie_InvalidID() {
 }
 
 func (suite *MovieControllerTestSuite) TestUpdateMovie_InvalidJSON() {
-	req, _ := http.NewRequest(http.MethodPut, "/api/v1/movies/"+mockingMovie.ID.String(), bytes.NewBuffer([]byte("{invalid}")))
+	req, _ := http.NewRequest(http.MethodPut, "/api/v1/movies/"+mockingMovie.ID, bytes.NewBuffer([]byte("{invalid}")))
 	req.Header.Set("Content-Type", "application/json")
 	resp := httptest.NewRecorder()
 	suite.router.ServeHTTP(resp, req)
@@ -253,7 +252,7 @@ func (suite *MovieControllerTestSuite) TestUpdateMovie_Error() {
 	suite.mockService.On("UpdateMovie", mock.AnythingOfType("entity.Movie")).Return(entity.Movie{}, errors.New("error updating movie"))
 
 	body, _ := json.Marshal(updateDTO)
-	req, _ := http.NewRequest(http.MethodPut, "/api/v1/movies/"+mockingMovie.ID.String(), bytes.NewBuffer(body))
+	req, _ := http.NewRequest(http.MethodPut, "/api/v1/movies/"+mockingMovie.ID, bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
 	resp := httptest.NewRecorder()
 	suite.router.ServeHTTP(resp, req)
@@ -268,7 +267,7 @@ func (suite *MovieControllerTestSuite) TestUpdateMovie_Error() {
 func (suite *MovieControllerTestSuite) TestDeleteMovie_Success() {
 	suite.mockService.On("DeleteMovie", mockingMovie.ID).Return(nil)
 
-	req, _ := http.NewRequest(http.MethodDelete, "/api/v1/movies/"+mockingMovie.ID.String(), nil)
+	req, _ := http.NewRequest(http.MethodDelete, "/api/v1/movies/"+mockingMovie.ID, nil)
 	resp := httptest.NewRecorder()
 	suite.router.ServeHTTP(resp, req)
 
@@ -290,7 +289,7 @@ func (suite *MovieControllerTestSuite) TestDeleteMovie_InvalidID() {
 func (suite *MovieControllerTestSuite) TestDeleteMovie_Error() {
 	suite.mockService.On("DeleteMovie", mockingMovie.ID).Return(errors.New("error deleting movie"))
 
-	req, _ := http.NewRequest(http.MethodDelete, "/api/v1/movies/"+mockingMovie.ID.String(), nil)
+	req, _ := http.NewRequest(http.MethodDelete, "/api/v1/movies/"+mockingMovie.ID, nil)
 	resp := httptest.NewRecorder()
 	suite.router.ServeHTTP(resp, req)
 

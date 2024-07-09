@@ -7,6 +7,7 @@ import (
 	seatroute "bioskuy/api/v1/seat/route"
 	showtimeroute "bioskuy/api/v1/showtime/route"
 	studioroute "bioskuy/api/v1/studio/route"
+	seatbookingroute "bioskuy/api/v1/seatbooking/route"
 	"bioskuy/api/v1/user/route"
 	"bioskuy/app"
 	"bioskuy/exception"
@@ -34,6 +35,7 @@ func main() {
 	studioroute.StudioRoute(router, validate, db, config)
 	seatroute.SeatRoute(router, validate, db)
 	showtimeroute.ShowtimeRoute(router, validate, db, config)
+	seatbookingroute.SeatBookingRoute(router, validate, db, config)
 
 	err := router.Run(":3000")
 	if err != nil {
