@@ -127,6 +127,101 @@ func (suite *SeatRepositoryTestSuite) TestFindByID_Error() {
 	suite.NoError(err)
 }
 
+func (suite *SeatRepositoryTestSuite) TestFindByIDWithNotAvailable_Success() {
+	seatID := "1"
+	query := regexp.QuoteMeta(`SELECT id, seat_name, isAvailable, studio_id FROM seats WHERE id = $1 AND isAvailable = true`)
+	rows := sqlmock.NewRows([]string{"id", "seat_name", "isAvailable", "studio_id"}).
+		AddRow(seatID, "Test Seat", true, "studio1")
+
+	suite.mockSql.ExpectBegin()
+	tx, err := suite.db.Begin()
+	suite.NoError(err)
+
+	suite.mockSql.ExpectQuery(query).WithArgs(seatID).WillReturnRows(rows)
+
+	ginContext, _ := gin.CreateTestContext(nil)
+	seat, err := suite.repo.FindByIDWithNotAvailable(context.Background(), tx, seatID, ginContext)
+	suite.NoError(err)
+	suite.Equal(seatID, seat.ID)
+	suite.Equal("Test Seat", seat.Name)
+	suite.Equal(true, seat.IsAvailable)
+
+	suite.mockSql.ExpectCommit()
+	err = tx.Commit()
+	suite.NoError(err)
+
+	err = suite.mockSql.ExpectationsWereMet()
+	suite.NoError(err)
+}
+
+func (suite *SeatRepositoryTestSuite) TestFindByIDWithNotAvailable_Error() {
+	seatID := "1"
+	query := regexp.QuoteMeta(`SELECT id, seat_name, isAvailable, studio_id FROM seats WHERE id = $1 AND isAvailable = true`)
+
+	suite.mockSql.ExpectBegin()
+	tx, err := suite.db.Begin()
+	suite.NoError(err)
+
+	suite.mockSql.ExpectQuery(query).WithArgs(seatID).WillReturnError(sql.ErrNoRows)
+
+	ginContext, _ := gin.CreateTestContext(nil)
+	_, err = suite.repo.FindByIDWithNotAvailable(context.Background(), tx, seatID, ginContext)
+	suite.Error(err)
+
+	suite.mockSql.ExpectRollback()
+	err = tx.Rollback()
+	suite.NoError(err)
+
+	err = suite.mockSql.ExpectationsWereMet()
+	suite.NoError(err)
+}
+
+func (suite *SeatRepositoryTestSuite) TestUpdate_Success() {
+	seat := entity.Seat{ID: "1", IsAvailable: false}
+	query := regexp.QuoteMeta(`UPDATE seats SET isAvailable = $1 WHERE id = $2`)
+
+	suite.mockSql.ExpectBegin()
+	tx, err := suite.db.Begin()
+	suite.NoError(err)
+
+	suite.mockSql.ExpectExec(query).WithArgs(seat.IsAvailable, seat.ID).WillReturnResult(sqlmock.NewResult(1, 1))
+
+	ginContext, _ := gin.CreateTestContext(nil)
+	updatedSeat, err := suite.repo.Update(context.Background(), tx, seat, ginContext)
+	suite.NoError(err)
+	suite.Equal(seat.ID, updatedSeat.ID)
+	suite.Equal(seat.IsAvailable, updatedSeat.IsAvailable)
+
+	suite.mockSql.ExpectCommit()
+	err = tx.Commit()
+	suite.NoError(err)
+
+	err = suite.mockSql.ExpectationsWereMet()
+	suite.NoError(err)
+}
+
+func (suite *SeatRepositoryTestSuite) TestUpdate_Error() {
+	seat := entity.Seat{ID: "1", IsAvailable: false}
+	query := regexp.QuoteMeta(`UPDATE seats SET isAvailable = $1 WHERE id = $2`)
+
+	suite.mockSql.ExpectBegin()
+	tx, err := suite.db.Begin()
+	suite.NoError(err)
+
+	suite.mockSql.ExpectExec(query).WithArgs(seat.IsAvailable, seat.ID).WillReturnError(sql.ErrConnDone)
+
+	ginContext, _ := gin.CreateTestContext(nil)
+	_, err = suite.repo.Update(context.Background(), tx, seat, ginContext)
+	suite.Error(err)
+
+	suite.mockSql.ExpectRollback()
+	err = tx.Rollback()
+	suite.NoError(err)
+
+	err = suite.mockSql.ExpectationsWereMet()
+	suite.NoError(err)
+}
+
 func (suite *SeatRepositoryTestSuite) TestFindAll_Success() {
 	studioID := "studio1"
 	query := regexp.QuoteMeta(`SELECT id, seat_name, isAvailable, studio_id FROM seats WHERE studio_id = $1`)
