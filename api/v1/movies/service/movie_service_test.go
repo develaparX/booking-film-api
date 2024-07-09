@@ -7,7 +7,6 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -19,7 +18,7 @@ type MovieServiceTestSuite struct {
 }
 
 var mockMovie = entity.Movie{
-	ID:          uuid.New(),
+	ID:          "1",
 	Title:       "Inception",
 	Description: "A mind-bending thriller",
 	Price:       10.0,

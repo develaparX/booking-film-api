@@ -23,7 +23,7 @@ func (suite *SeatRepositoryTestSuite) SetupTest() {
 	var err error
 	suite.db, suite.mockSql, err = sqlmock.New()
 	suite.NoError(err)
-	suite.repo = NewSeatRepository(suite.db)
+	suite.repo = NewSeatRepository()
 }
 
 func (suite *SeatRepositoryTestSuite) TearDownTest() {

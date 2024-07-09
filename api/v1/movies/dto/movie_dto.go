@@ -1,7 +1,5 @@
 package dto
 
-import "github.com/google/uuid"
-
 type CreateMovieDTO struct {
 	Title       string `json:"title" binding:"required"`
 	Description string `json:"description" binding:"required"`
@@ -19,10 +17,10 @@ type UpdateMovieDTO struct {
 }
 
 type MovieResponseDTO struct {
-	ID          uuid.UUID `json:"id"`
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
-	Price       int       `json:"price"`
-	Duration    int       `json:"duration"`
-	Status      string    `json:"status"`
+	ID          string `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Price       int    `json:"price"`
+	Duration    int    `json:"duration"`
+	Status      string `json:"status"`
 }

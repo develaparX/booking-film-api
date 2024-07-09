@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -22,7 +21,7 @@ type MovieRepositoryTestSuite struct {
 }
 
 var mockingMovie = entity.Movie{
-	ID:          uuid.New(),
+	ID:          "1",
 	Title:       "Inception",
 	Description: "A mind-bending thriller",
 	Price:       100,
@@ -49,7 +48,7 @@ func (suite *MovieRepositoryTestSuite) TestGetAll_Success() {
 	suite.mockSql.ExpectQuery(`SELECT id, title, description, price, duration, status FROM movies LIMIT \$1 OFFSET \$2`).WithArgs(size, (page-1)*size).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "title", "description", "price", "duration", "status"}).
 			AddRow(mockingMovie.ID, mockingMovie.Title, mockingMovie.Description, mockingMovie.Price, mockingMovie.Duration, mockingMovie.Status).
-			AddRow(uuid.New(), "Avatar", "A sci-fi adventure", 150, 180, "AVAILABLE"))
+			AddRow("1", "Avatar", "A sci-fi adventure", 150, 180, "AVAILABLE"))
 
 	suite.mockSql.ExpectQuery(`SELECT COUNT\(\*\) FROM movies`).WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(totalRows))
 
@@ -120,7 +119,7 @@ func (suite *MovieRepositoryTestSuite) TestCreate_Failed() {
 }
 
 func (suite *MovieRepositoryTestSuite) TestGetByID_ErrorOnQuery() {
-	id := uuid.New()
+	id := "1"
 
 	suite.mockSql.ExpectQuery(`SELECT id, title, description, price, duration, status FROM movies WHERE id = \$1`).WithArgs(id).
 		WillReturnError(errors.New("Query Error"))
@@ -130,7 +129,7 @@ func (suite *MovieRepositoryTestSuite) TestGetByID_ErrorOnQuery() {
 }
 
 func (suite *MovieRepositoryTestSuite) TestGetByID_Success() {
-	id := uuid.New()
+	id := "1"
 
 	suite.mockSql.ExpectQuery(`SELECT id, title, description, price, duration, status FROM movies WHERE id = \$1`).WithArgs(id).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "title", "description", "price", "duration", "status"}).AddRow(mockingMovie.ID, mockingMovie.Title, mockingMovie.Description, mockingMovie.Price, mockingMovie.Duration, mockingMovie.Status))
@@ -171,7 +170,7 @@ func (suite *MovieRepositoryTestSuite) TestDelete_Success() {
 }
 
 func (suite *MovieRepositoryTestSuite) TestDelete_Failed() {
-	id := uuid.New()
+	id := "1"
 
 	suite.mockSql.ExpectQuery(`DELETE FROM movies WHERE id = \$1 RETURNING id, title, description, price, duration, status`).WithArgs(id).
 		WillReturnError(errors.New("Delete Movie Failed"))

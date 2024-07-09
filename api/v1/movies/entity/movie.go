@@ -1,9 +1,7 @@
 package entity
 
-import "github.com/google/uuid"
-
 type Movie struct {
-	ID          uuid.UUID `json:"id"`
+	ID          string `json:"id"`
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
 	Price       int       `json:"price"`

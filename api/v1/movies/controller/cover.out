@@ -1,0 +1,27 @@
+mode: set
+bioskuy/api/v1/movies/controller/controller_impl.go:19.71,21.2 1 1
+bioskuy/api/v1/movies/controller/controller_impl.go:23.63,25.28 2 1
+bioskuy/api/v1/movies/controller/controller_impl.go:25.28,27.3 1 1
+bioskuy/api/v1/movies/controller/controller_impl.go:28.2,29.28 2 1
+bioskuy/api/v1/movies/controller/controller_impl.go:29.28,31.3 1 1
+bioskuy/api/v1/movies/controller/controller_impl.go:33.2,34.16 2 1
+bioskuy/api/v1/movies/controller/controller_impl.go:34.16,37.3 2 0
+bioskuy/api/v1/movies/controller/controller_impl.go:39.2,47.33 2 0
+bioskuy/api/v1/movies/controller/controller_impl.go:50.62,52.53 2 1
+bioskuy/api/v1/movies/controller/controller_impl.go:52.53,55.3 2 1
+bioskuy/api/v1/movies/controller/controller_impl.go:56.2,64.16 3 1
+bioskuy/api/v1/movies/controller/controller_impl.go:64.16,67.3 2 1
+bioskuy/api/v1/movies/controller/controller_impl.go:68.2,68.226 1 1
+bioskuy/api/v1/movies/controller/controller_impl.go:71.59,75.16 3 1
+bioskuy/api/v1/movies/controller/controller_impl.go:75.16,78.3 2 0
+bioskuy/api/v1/movies/controller/controller_impl.go:79.2,79.179 1 0
+bioskuy/api/v1/movies/controller/controller_impl.go:82.62,85.16 2 1
+bioskuy/api/v1/movies/controller/controller_impl.go:85.16,88.3 2 1
+bioskuy/api/v1/movies/controller/controller_impl.go:89.2,90.53 2 1
+bioskuy/api/v1/movies/controller/controller_impl.go:90.53,93.3 2 0
+bioskuy/api/v1/movies/controller/controller_impl.go:94.2,103.16 3 1
+bioskuy/api/v1/movies/controller/controller_impl.go:103.16,106.3 2 1
+bioskuy/api/v1/movies/controller/controller_impl.go:107.2,107.221 1 1
+bioskuy/api/v1/movies/controller/controller_impl.go:110.62,114.16 3 0
+bioskuy/api/v1/movies/controller/controller_impl.go:114.16,117.3 2 0
+bioskuy/api/v1/movies/controller/controller_impl.go:118.2,118.221 1 0
