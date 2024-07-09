@@ -102,6 +102,20 @@ func (r *userRepository) FindAll(ctx context.Context, tx *sql.Tx, c *gin.Context
 	return users, nil
 }
 
+func (r *userRepository) UpdateToken(ctx context.Context, tx *sql.Tx, user entity.User, c *gin.Context) (entity.User, error){
+
+	query := `UPDATE users SET token = $1 WHERE id = $2`
+
+	_, err := tx.ExecContext(ctx, query, user.Token, user.ID)
+
+	if err != nil {
+		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+		return  user, err
+	}
+
+	return user, nil
+}
+
 func (r *userRepository) Update(ctx context.Context, tx *sql.Tx, user entity.User, c *gin.Context) (entity.User, error){
 
 	query := `UPDATE users SET role = $1 WHERE id = $2`
