@@ -5,8 +5,6 @@ import (
 	"bioskuy/api/v1/movies/entity"
 	"database/sql"
 	"math"
-
-	"github.com/google/uuid"
 )
 
 type movieRepositoryImpl struct {
@@ -62,7 +60,7 @@ func (r *movieRepositoryImpl) Create(movie entity.Movie) (entity.Movie, error) {
 	return movie, nil
 }
 
-func (r *movieRepositoryImpl) GetByID(id uuid.UUID) (entity.Movie, error) {
+func (r *movieRepositoryImpl) GetByID(id string) (entity.Movie, error){
 	var movie entity.Movie
 	err := r.db.QueryRow(`SELECT id, title, description, price, duration, status FROM movies WHERE id = $1`, id).Scan(
 		&movie.ID, &movie.Title, &movie.Description, &movie.Price, &movie.Duration, &movie.Status)
@@ -81,7 +79,7 @@ func (r *movieRepositoryImpl) Update(movie entity.Movie) (entity.Movie, error) {
 	return movie, nil
 }
 
-func (r *movieRepositoryImpl) Delete(id uuid.UUID) (entity.Movie, error) {
+func (r *movieRepositoryImpl) Delete(id string) (entity.Movie, error) {
 	var movie entity.Movie
 	err := r.db.QueryRow(`DELETE FROM movies WHERE id = $1 RETURNING id, title, description, price, duration, status`, id).Scan(
 		&movie.ID, &movie.Title, &movie.Description, &movie.Price, &movie.Duration, &movie.Status)
