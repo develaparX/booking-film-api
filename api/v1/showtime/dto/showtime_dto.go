@@ -29,7 +29,7 @@ type ShowtimesResponse struct {
 	ID               	string `json:"id"`
 	StudioID 			string `json:"studio_id"`
 	MovieID          	string `json:"movie_id"`
-	StudioName        	string `json:"genre_name"`
+	StudioName        	string `json:"studio_name"`
 	MovieTitle       	string `json:"movie_title"`
 	MovieDescription 	string `json:"movie_description"`
 	MoviePrice       	int    `json:"movie_price"`
