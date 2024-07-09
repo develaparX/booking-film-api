@@ -29,9 +29,13 @@ func (r *genretomovieRepository) Save(ctx context.Context, tx *sql.Tx, GenreToMo
 	return GenreToMovie, nil
 }
 
-func (r *genretomovieRepository) FindByID(ctx context.Context, tx *sql.Tx, id string, c *gin.Context) (entity.GenreToMovie, error) {
-
-	query := `SELECT id, genre_id, movie_id FROM genre_to_movies WHERE id = $1`
+func (r *genretomovieRepository) FindByID(ctx context.Context, tx *sql.Tx, id string, c *gin.Context) (entity.GenreToMovie, error){
+	query := `SELECT gtm.id, gtm.genre_id, gtm.movie_id, g.name as genre_name, m.title as movie_title, m.description as movie_description, 
+                  m.price as movie_price, m.duration as movie_duration, m.status as movie_status
+	          FROM genre_to_movies gtm 
+	          JOIN genres g ON gtm.genre_id = g.id 
+	          JOIN movies m ON gtm.movie_id = m.id 
+	          WHERE gtm.id = $1`
 
 	genretomovie := entity.GenreToMovie{}
 	rows, err := tx.QueryContext(ctx, query, id)
@@ -41,8 +45,9 @@ func (r *genretomovieRepository) FindByID(ctx context.Context, tx *sql.Tx, id st
 	}
 	defer rows.Close()
 
-	if rows.Next() {
-		err := rows.Scan(&genretomovie.ID, &genretomovie.GenreID, &genretomovie.MovieID)
+	if rows.Next(){
+		err := rows.Scan(&genretomovie.ID, &genretomovie.GenreID, &genretomovie.MovieID, &genretomovie.GenreName, &genretomovie.MovieTitle,
+		                &genretomovie.MovieDescription, &genretomovie.MoviePrice, &genretomovie.MovieDuration, &genretomovie.MovieStatus)
 		if err != nil {
 			c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
 			return genretomovie, err
@@ -54,9 +59,12 @@ func (r *genretomovieRepository) FindByID(ctx context.Context, tx *sql.Tx, id st
 	}
 }
 
-func (r *genretomovieRepository) FindAll(ctx context.Context, tx *sql.Tx, c *gin.Context) ([]entity.GenreToMovie, error) {
-
-	query := `SELECT id, genre_id, movie_id FROM genre_to_movies`
+func (r *genretomovieRepository) FindAll(ctx context.Context, tx *sql.Tx, c *gin.Context) ([]entity.GenreToMovie, error){
+	query := `SELECT gtm.id, gtm.genre_id, gtm.movie_id, g.name as genre_name, m.title as movie_title, m.description as movie_description, 
+                  m.price as movie_price, m.duration as movie_duration, m.status as movie_status
+	          FROM genre_to_movies gtm 
+	          JOIN genres g ON gtm.genre_id = g.id 
+	          JOIN movies m ON gtm.movie_id = m.id`
 
 	genretomovies := []entity.GenreToMovie{}
 	rows, err := tx.QueryContext(ctx, query)
@@ -68,7 +76,8 @@ func (r *genretomovieRepository) FindAll(ctx context.Context, tx *sql.Tx, c *gin
 
 	for rows.Next() {
 		genretomovie := entity.GenreToMovie{}
-		if err := rows.Scan(&genretomovie.ID, &genretomovie.GenreID, &genretomovie.MovieID); err != nil {
+		if err := rows.Scan(&genretomovie.ID, &genretomovie.GenreID, &genretomovie.MovieID, &genretomovie.GenreName, 
+			&genretomovie.MovieTitle, &genretomovie.MovieDescription, &genretomovie.MoviePrice, &genretomovie.MovieDuration, &genretomovie.MovieStatus); err != nil {
 			return nil, err
 		}
 		genretomovies = append(genretomovies, genretomovie)
