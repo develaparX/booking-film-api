@@ -78,20 +78,20 @@ func (controller *seatbookingControllerImpl) FindAll(c *gin.Context) {
     c.JSON(http.StatusOK, response)
 }
 
-// func (ctl *seatbookingControllerImpl) Delete(c *gin.Context) {
-// 	ctx := c.Request.Context()
-// 	response := web.FormatResponse{}
-// 	id := c.Param("showtimeId")
+func (ctl *seatbookingControllerImpl) Delete(c *gin.Context) {
+	ctx := c.Request.Context()
+	response := web.FormatResponse{}
+	id := c.Param("seatbookingId")
 
-// 	err := ctl.Service.Delete(ctx, id, c)
-// 	if err != nil {
-// 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-// 		return
+	err := ctl.Service.Delete(ctx, id, c)
+	if err != nil {
+		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+		return
 
-// 	} else{
-// 		response.ResponseCode = http.StatusOK
-// 		response.Data = "OK"
+	} else{
+		response.ResponseCode = http.StatusOK
+		response.Data = "OK"
 	
-// 		c.JSON(http.StatusOK, response)
-// 	}
-// }
+		c.JSON(http.StatusOK, response)
+	}
+}

@@ -27,11 +27,12 @@ func SeatBookingRoute(router *gin.Engine, validate *validator.Validate, db *sql.
 	seatBookinngController := controller.NewSeatbookingController(seatBookingService)
 	v1 := router.Group("/api/v1")
 	{
-		showtimeRoutes := v1.Group("/booking")
+		showtimeRoutes := v1.Group("/bookings")
 		{
 			showtimeRoutes.POST("/", middleware.AuthMiddleware(authService, "admin"), seatBookinngController.Create)
 			showtimeRoutes.GET("/", seatBookinngController.FindAll)
 			showtimeRoutes.GET("/:seatbookingId", seatBookinngController.FindById)
+			showtimeRoutes.DELETE("/:seatbookingId", seatBookinngController.Delete)
 		}
 	}
 }

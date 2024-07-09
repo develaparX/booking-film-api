@@ -147,17 +147,38 @@ func (r *seatBookingRepository) FindAll(ctx context.Context, tx *sql.Tx, c *gin.
 	return seatBookings, nil
 }
 
-// func (r *seatBookingRepository) Delete(ctx context.Context, tx *sql.Tx, id string, c *gin.Context) error{
-// 	query := `DELETE FROM showtimes WHERE id = $1`
+func (r *seatBookingRepository) Delete(ctx context.Context, tx *sql.Tx, seatBookingID string, c *gin.Context) error {
 
-// 	_, err := tx.ExecContext(ctx, query, id)
+	updateSeatQuery := `UPDATE seats SET isAvailable = true WHERE id IN (SELECT seat_id FROM seat_detail_for_bookings WHERE seatBooking_id = $1)
+	`
+	_, err := tx.ExecContext(ctx, updateSeatQuery, seatBookingID)
+	if err != nil {
+		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+		return err
+	}
 
-// 	if err != nil {
-// 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-// 		return  err
-// 	}
+	deleteSeatDetailQuery := `DELETE FROM seat_detail_for_bookings  WHERE seatBooking_id = $1 `
+	_, err = tx.ExecContext(ctx, deleteSeatDetailQuery, seatBookingID)
+	if err != nil {
+		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+		return err
+	}
 
-// 	return nil
-// }
+	updateSeatBookingQuery := `UPDATE seat_bookings SET status = 'active' WHERE id = $1`
+	_, err = tx.ExecContext(ctx, updateSeatBookingQuery, seatBookingID)
+	if err != nil {
+		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+		return err
+	}
+
+	deleteSeatBookingQuery := `DELETE FROM seat_bookings WHERE id = $1`
+	_, err = tx.ExecContext(ctx, deleteSeatBookingQuery, seatBookingID)
+	if err != nil {
+		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+		return err
+	}
+
+	return nil
+}
 
 

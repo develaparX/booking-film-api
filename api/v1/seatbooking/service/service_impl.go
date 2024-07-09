@@ -182,30 +182,20 @@ func (s *seatbookingServiceImpl) FindAll(ctx context.Context, c *gin.Context) ([
 	return seatBookingResponses, nil
 }
 
-// func (s *seatbookingServiceImpl) Delete(ctx context.Context, id string, c *gin.Context) error{
-// 	seatbooking := entity.SeatBooking{}
+func (s *seatbookingServiceImpl) Delete(ctx context.Context, id string, c *gin.Context) error {
+	tx, err := s.DB.Begin()
+	if err != nil {
+		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+		return err
+	}
+	defer helper.CommitAndRollback(tx, c)
 
-// 	tx, err := s.DB.Begin()
-// 	if err != nil {
-// 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-// 		return err
-// 	}
-// 	defer helper.CommitAndRollback(tx, c)
+	err = s.Repo.Delete(ctx, tx, id, c)
+	if err != nil {
+		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+		return err
+	}
 
-// 	resultUser, err := s.Repo.FindByID(ctx, tx, id, c)
-// 	if err != nil {
-// 		c.Error(exception.NotFoundError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-// 		return err
-// 	}
-
-// 	seatbooking.ID = resultUser.ID
-
-// 	err = s.Repo.Delete(ctx, tx, id, c)
-// 	if err != nil {
-// 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-// 		return err
-// 	}
-
-// 	return nil
-// }
+	return nil
+}
 
