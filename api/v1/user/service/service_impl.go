@@ -52,7 +52,6 @@ func (s *userService) Login(ctx context.Context, request dto.CreateUserRequest, 
 	user := entity.User{
 		Name:  request.Name,
 		Email: request.Email,
-		Role:  request.Role,
 	}
 
 	var result entity.User
@@ -68,6 +67,8 @@ func (s *userService) Login(ctx context.Context, request dto.CreateUserRequest, 
 		
 	}
 
+	fmt.Println(result)
+
 	Token, err := s.Jwt.GenerateToken(result, c)
 	if err != nil {
 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
@@ -77,7 +78,7 @@ func (s *userService) Login(ctx context.Context, request dto.CreateUserRequest, 
 	user.ID = result.ID
 	user.Token = Token
 
-	user, err = s.Repo.Update(ctx, tx, user, c)
+	user, err = s.Repo.UpdateToken(ctx, tx, user, c)
 	if err != nil {
 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
 		return UserResponse, err
