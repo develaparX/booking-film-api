@@ -11,11 +11,10 @@ import (
 )
 
 type seatRepository struct {
-	DB *sql.DB
 }
 
-func NewSeatRepository(DB *sql.DB) SeatRepository {
-	return &seatRepository{DB: DB}
+func NewSeatRepository() SeatRepository {
+	return &seatRepository{}
 }
 
 func (r *seatRepository) Save(ctx context.Context, tx *sql.Tx, seat entity.Seat, c *gin.Context) (entity.Seat, error) {
