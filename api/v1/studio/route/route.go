@@ -18,7 +18,7 @@ func StudioRoute(router *gin.Engine, validate *validator.Validate, db *sql.DB, c
 
 	authService := auth.NewService(config)
 
-	seatRepo := repoSeat.NewSeatRepository(db)
+	seatRepo := repoSeat.NewSeatRepository()
 
 	studioRepo := repository.NewStudioRepository()
 	studioService := service.NewStudioService(studioRepo, validate, db, seatRepo)
