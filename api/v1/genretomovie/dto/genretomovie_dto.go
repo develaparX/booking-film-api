@@ -1,9 +1,8 @@
 package dto
 
 type CreateGenreToMovieRequest struct {
-	ID      string `json:"id"`
-	GenreID string `json:"genre_id"`
-	MovieID string `json:"movie_id"`
+	GenreID string `json:"genre_id" validate:"required"`
+	MovieID string `json:"movie_id" validate:"required"`
 }
 
 type GenreToMovieCreateResponse struct {

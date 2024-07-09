@@ -69,11 +69,8 @@ func (ctrl *movieControllerImpl) CreateMovie(c *gin.Context) {
 }
 
 func (ctrl *movieControllerImpl) GetMovie(c *gin.Context) {
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
-		return
-	}
+	id := c.Param("id")
+
 	movie, err := ctrl.Service.GetMovieByID(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -111,11 +108,8 @@ func (ctrl *movieControllerImpl) UpdateMovie(c *gin.Context) {
 }
 
 func (ctrl *movieControllerImpl) DeleteMovie(c *gin.Context) {
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
-		return
-	}
+	id  := c.Param("id")
+	
 	deletedMovie, err := ctrl.Service.DeleteMovie(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

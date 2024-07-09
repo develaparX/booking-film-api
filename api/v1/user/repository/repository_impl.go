@@ -19,9 +19,9 @@ func NewUserRepository() UserRepository {
 
 func (r *userRepository) Save(ctx context.Context, tx *sql.Tx, user entity.User, c *gin.Context) (entity.User, error) {
 
-	query := "INSERT INTO users (name, email, token, role) VALUES ($1, $2, $3, $4) RETURNING id"
+	query := "INSERT INTO users (name, email, token) VALUES ($1, $2, $3) RETURNING id"
 
-	err := tx.QueryRowContext(ctx, query, user.Name, user.Email, user.Token, user.Role).Scan(&user.ID)
+	err := tx.QueryRowContext(ctx, query, user.Name, user.Email, user.Token).Scan(&user.ID)
 	if err != nil {
 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
 		return user, err
