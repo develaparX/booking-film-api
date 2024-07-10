@@ -6,9 +6,7 @@ import (
 	seatbookingRepo "bioskuy/api/v1/seatbooking/repository"
 	"bioskuy/api/v1/seatbooking/service"
 	showtimeRepo "bioskuy/api/v1/showtime/repository"
-	"bioskuy/auth"
 	"bioskuy/helper"
-	"bioskuy/middleware"
 	"database/sql"
 
 	"github.com/gin-gonic/gin"
@@ -16,8 +14,6 @@ import (
 )
 
 func SeatBookingRoute(router *gin.Engine, validate *validator.Validate, db *sql.DB, config *helper.Config) {
-	
-	authService := auth.NewService(config)
 
 	seatbookingRepo := seatbookingRepo.NewSeatBookingRepository()
 	seatRepo := seatRepo.NewSeatRepository()
@@ -29,7 +25,7 @@ func SeatBookingRoute(router *gin.Engine, validate *validator.Validate, db *sql.
 	{
 		showtimeRoutes := v1.Group("/bookings")
 		{
-			showtimeRoutes.POST("/", middleware.AuthMiddleware(authService, "admin"), seatBookinngController.Create)
+			showtimeRoutes.POST("/", seatBookinngController.Create)
 			showtimeRoutes.GET("/", seatBookinngController.FindAll)
 			showtimeRoutes.GET("/:seatbookingId", seatBookinngController.FindById)
 			showtimeRoutes.DELETE("/:seatbookingId", seatBookinngController.Delete)
