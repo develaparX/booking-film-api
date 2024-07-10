@@ -42,7 +42,6 @@ func (s *seatbookingServiceImpl) Create(ctx context.Context, request dto.SeatBoo
 
 	SeatBookingRequest.UserID = userid
 	SeatBookingRequest.ShowtimeID = request.ShowtimeID
-	SeatBookingRequest.Status = request.Status
 
 	err := s.Validate.Struct(request)
 	if err != nil {
@@ -79,7 +78,7 @@ func (s *seatbookingServiceImpl) Create(ctx context.Context, request dto.SeatBoo
 		SeatID:            request.SeatID,
 	}
 
-	result, err := s.Repo.Save(ctx, tx, seatbooking, request.SeatID, c)
+	result, err := s.Repo.Save(ctx, tx, seatbooking, c)
 	if err != nil {
 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
 		return SeatBookingResponse, err
@@ -134,6 +133,7 @@ func (s *seatbookingServiceImpl) FindByID(ctx context.Context, id string, c *gin
 	seatBookingResponse.SeatDetailForBookingID = result.SeatDetailForBookingID
 	seatBookingResponse.SeatName = result.SeatName
 	seatBookingResponse.SeatIsAvailable = result.SeatIsAvailable
+	
 
 	return seatBookingResponse, nil
 }
