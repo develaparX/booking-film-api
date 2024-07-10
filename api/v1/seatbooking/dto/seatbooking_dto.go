@@ -3,7 +3,6 @@ package dto
 type SeatBookingRequest struct {
 	SeatID     string `json:"seat_id" validate:"required"`
 	ShowtimeID string `json:"showtime_id" validate:"required"`
-	Status     string `json:"status" validate:"required"`
 }
 
 type CreateSeatBookingRequest struct {
