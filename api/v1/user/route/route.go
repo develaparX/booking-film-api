@@ -28,7 +28,7 @@ func UserRoute(router *gin.Engine, validate *validator.Validate, db *sql.DB, con
 			users.GET("/google/login", userController.LoginWithGoogle)
 			users.GET("/google/callback", userController.CallbackFromGoogle)
 			users.GET("/:userId", userController.GetUserByID)
-			users.GET("/", userController.GetAllUsers)
+			users.GET("/",  middleware.AuthMiddleware(authService, "super admin"), userController.GetAllUsers)
 			users.PUT("/:userId", middleware.AuthMiddleware(authService, "super admin"), userController.UpdateUser)
 			users.DELETE("/:userId", middleware.AuthMiddleware(authService, "super admin"), userController.DeleteUser)
 		}

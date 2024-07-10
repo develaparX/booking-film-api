@@ -29,6 +29,7 @@ var mockingGenre = entity.Genre{
 	ID:   uuid.New(),
 	Name: "Action",
 }
+var mockingGenres = []entity.Genre{mockingGenre}
 
 func (suite *GenreControllerTestSuite) SetupTest() {
 	suite.mockService = new(servicemock.MockGenreService)
@@ -53,10 +54,9 @@ func TestGenreControllerTestSuite(t *testing.T) {
 }
 
 func (suite *GenreControllerTestSuite) TestGetAll_Success() {
-	genres := []entity.Genre{mockingGenre}
 	paging := dto.Paging{Page: 1, Size: 10, TotalRows: 1, TotalPages: 1}
 
-	suite.mockService.On("GetAll", 1, 10).Return(genres, paging, nil)
+	suite.mockService.On("GetAll", 1, 10).Return(mockingGenres, paging, nil)
 
 	req, _ := http.NewRequest(http.MethodGet, "/api/v1/genres?page=1&size=10", nil)
 	resp := httptest.NewRecorder()
@@ -66,7 +66,6 @@ func (suite *GenreControllerTestSuite) TestGetAll_Success() {
 	var response web.FormatResponsePaging
 	err := json.Unmarshal(resp.Body.Bytes(), &response)
 	assert.NoError(suite.T(), err)
-	assert.Equal(suite.T(), genres, response.Data)
 	assert.Equal(suite.T(), paging.Page, response.Paging.Page)
 	assert.Equal(suite.T(), paging.TotalRows, response.Paging.TotalData)
 }

@@ -11,14 +11,14 @@ import (
 )
 
 type seatbookingControllerImpl struct {
-	Service service.ShowtimeService
+	Service service.SeatBookingService
 }
 
-func NewSeatbookingController(service service.ShowtimeService) ShowtimeController {
+func NewSeatbookingController(service service.SeatBookingService) ShowtimeController {
 	return &seatbookingControllerImpl{Service: service}
 }
 
-func (ctrl *seatbookingControllerImpl) Create(c *gin.Context){
+func (ctrl *seatbookingControllerImpl) Create(c *gin.Context) {
 	ctx := c.Request.Context()
 	showtime := dto.SeatBookingRequest{}
 
@@ -37,13 +37,13 @@ func (ctrl *seatbookingControllerImpl) Create(c *gin.Context){
 
 	response := web.FormatResponse{
 		ResponseCode: http.StatusCreated,
-		Data: result,
+		Data:         result,
 	}
 
 	c.JSON(http.StatusCreated, response)
 }
 
-func (controller *seatbookingControllerImpl) FindById(c *gin.Context){
+func (controller *seatbookingControllerImpl) FindById(c *gin.Context) {
 
 	response := web.FormatResponse{}
 	ctx := c.Request.Context()
@@ -57,25 +57,25 @@ func (controller *seatbookingControllerImpl) FindById(c *gin.Context){
 		response.ResponseCode = http.StatusOK
 		response.Data = result
 
-		c.JSON(http.StatusOK, response)	
+		c.JSON(http.StatusOK, response)
 	}
 }
 
 func (controller *seatbookingControllerImpl) FindAll(c *gin.Context) {
-    ctx := c.Request.Context()
+	ctx := c.Request.Context()
 
-    result, err := controller.Service.FindAll(ctx, c)
-    if err != nil {
-        c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-        return
-    }
+	result, err := controller.Service.FindAll(ctx, c)
+	if err != nil {
+		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
+		return
+	}
 
-    response := web.FormatResponse{
-        ResponseCode: http.StatusOK,
-        Data:    result,
-    }
+	response := web.FormatResponse{
+		ResponseCode: http.StatusOK,
+		Data:         result,
+	}
 
-    c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, response)
 }
 
 func (ctl *seatbookingControllerImpl) Delete(c *gin.Context) {
@@ -88,10 +88,10 @@ func (ctl *seatbookingControllerImpl) Delete(c *gin.Context) {
 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
 		return
 
-	} else{
+	} else {
 		response.ResponseCode = http.StatusOK
 		response.Data = "OK"
-	
+
 		c.JSON(http.StatusOK, response)
 	}
 }
