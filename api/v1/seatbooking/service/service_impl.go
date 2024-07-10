@@ -17,29 +17,29 @@ import (
 )
 
 type seatbookingServiceImpl struct {
-	Repo repository.SeatBookingRepository
+	Repo         repository.SeatBookingRepository
 	RepoShowtime RepoShowtime.ShowtimeRepository
-	RepoSeat RepoSeat.SeatRepository
-	Validate *validator.Validate
-	DB *sql.DB
-	Mutex           sync.Mutex
+	RepoSeat     RepoSeat.SeatRepository
+	Validate     *validator.Validate
+	DB           *sql.DB
+	Mutex        sync.Mutex
 }
 
-func NewSeatBookingService(repo repository.SeatBookingRepository,RepoShowtime RepoShowtime.ShowtimeRepository,
-	RepoSeat RepoSeat.SeatRepository, validate *validator.Validate, DB *sql.DB) ShowtimeService {
+func NewSeatBookingService(repo repository.SeatBookingRepository, RepoShowtime RepoShowtime.ShowtimeRepository,
+	RepoSeat RepoSeat.SeatRepository, validate *validator.Validate, DB *sql.DB) SeatBookingService {
 	return &seatbookingServiceImpl{
-		Repo: repo,
+		Repo:         repo,
 		RepoShowtime: RepoShowtime,
-		RepoSeat: RepoSeat,
-		Validate: validate,
-		DB: DB,
+		RepoSeat:     RepoSeat,
+		Validate:     validate,
+		DB:           DB,
 	}
 }
 
 func (s *seatbookingServiceImpl) Create(ctx context.Context, request dto.SeatBookingRequest, userid string, c *gin.Context) (dto.CreateSeatBookingResponse, error) {
 	var SeatBookingResponse = dto.CreateSeatBookingResponse{}
 	var SeatBookingRequest = dto.CreateSeatBookingRequest{}
-	
+
 	SeatBookingRequest.UserID = userid
 	SeatBookingRequest.ShowtimeID = request.ShowtimeID
 	SeatBookingRequest.Status = request.Status
@@ -73,10 +73,10 @@ func (s *seatbookingServiceImpl) Create(ctx context.Context, request dto.SeatBoo
 	}
 
 	seatbooking := entity.SeatBooking{
-		UserID: userid,
-		ShowtimeID: SeatBookingRequest.ShowtimeID,
+		UserID:            userid,
+		ShowtimeID:        SeatBookingRequest.ShowtimeID,
 		SeatBookingStatus: SeatBookingRequest.Status,
-		SeatID: request.SeatID,
+		SeatID:            request.SeatID,
 	}
 
 	result, err := s.Repo.Save(ctx, tx, seatbooking, request.SeatID, c)
@@ -92,7 +92,6 @@ func (s *seatbookingServiceImpl) Create(ctx context.Context, request dto.SeatBoo
 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
 		return SeatBookingResponse, err
 	}
-
 
 	SeatBookingResponse.ID = result.SeatDetailForBookingID
 	SeatBookingResponse.SeatBookingID = result.ID
@@ -157,24 +156,24 @@ func (s *seatbookingServiceImpl) FindAll(ctx context.Context, c *gin.Context) ([
 
 	for _, result := range results {
 		seatBookingResponse := dto.SeatBookingResponse{
-			ID:                    result.ID,
-			SeatBookingStatus:     result.SeatBookingStatus,
-			UserID:                result.UserID,
-			ShowtimeID:            result.ShowtimeID,
-			ShowStart:             result.ShowStart,
-			ShowEnd:               result.ShowEnd,
-			StudioID:              result.StudioID,
-			StudioName:            result.StudioName,
-			MovieID:               result.MovieID,
-			MovieTitle:            result.MovieTitle,
-			MovieDescription:      result.MovieDescription,
-			MoviePrice:            result.MoviePrice,
-			MovieDuration:         result.MovieDuration,
-			MovieStatus:           result.MovieStatus,
-			SeatID:                result.SeatID,
+			ID:                     result.ID,
+			SeatBookingStatus:      result.SeatBookingStatus,
+			UserID:                 result.UserID,
+			ShowtimeID:             result.ShowtimeID,
+			ShowStart:              result.ShowStart,
+			ShowEnd:                result.ShowEnd,
+			StudioID:               result.StudioID,
+			StudioName:             result.StudioName,
+			MovieID:                result.MovieID,
+			MovieTitle:             result.MovieTitle,
+			MovieDescription:       result.MovieDescription,
+			MoviePrice:             result.MoviePrice,
+			MovieDuration:          result.MovieDuration,
+			MovieStatus:            result.MovieStatus,
+			SeatID:                 result.SeatID,
 			SeatDetailForBookingID: result.SeatDetailForBookingID,
-			SeatName:              result.SeatName,
-			SeatIsAvailable:       result.SeatIsAvailable,
+			SeatName:               result.SeatName,
+			SeatIsAvailable:        result.SeatIsAvailable,
 		}
 		seatBookingResponses = append(seatBookingResponses, seatBookingResponse)
 	}
@@ -198,4 +197,3 @@ func (s *seatbookingServiceImpl) Delete(ctx context.Context, id string, c *gin.C
 
 	return nil
 }
-

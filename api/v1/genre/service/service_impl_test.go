@@ -75,7 +75,7 @@ func (suite *GenreServiceTestSuite) TestGetAll_Success() {
 }
 
 func (suite *GenreServiceTestSuite) TestGetAll_Error() {
-	suite.mockRepo.On("GetAll", 1, 10).Return(nil, dto.Paging{}, errors.New("error fetching genres"))
+	suite.mockRepo.On("GetAll", 1, 10).Return([]entity.Genre{}, dto.Paging{}, errors.New("error fetching genres"))
 
 	_, _, err := suite.service.GetAll(1, 10)
 	assert.Error(suite.T(), err)

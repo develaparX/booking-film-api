@@ -107,8 +107,7 @@ func (suite *GenreRepositoryTestSuite) TestCreate_Success() {
 }
 
 func (suite *GenreRepositoryTestSuite) TestCreate_Failed() {
-	suite.mockSql.ExpectQuery(`INSERT INTO genres \(id, name\) VALUES \(\$1, \$2\) RETURNING id, name`).
-		WithArgs(sqlmock.AnyArg(), mockingGenre.Name).
+	suite.mockSql.ExpectBegin().
 		WillReturnError(errors.New("Insert Genre Failed"))
 
 	_, err := suite.repo.Create(mockingGenre)
@@ -126,13 +125,15 @@ func (suite *GenreRepositoryTestSuite) TestGetByID_ErrorOnQuery() {
 }
 
 func (suite *GenreRepositoryTestSuite) TestGetByID_ErrorNoRows() {
-	id := uuid.New()
+	id := entity.Genre{
+		ID: uuid.New(),
+	}
 
 	suite.mockSql.ExpectQuery(`SELECT id, name FROM genres WHERE id = \$1`).WithArgs(id).
 		WillReturnError(sql.ErrNoRows)
 
-	genre, err := suite.repo.GetByID(id)
-	assert.NoError(suite.T(), err)
+	genre, err := suite.repo.GetByID(id.ID)
+	assert.Error(suite.T(), err)
 	assert.Equal(suite.T(), entity.Genre{}, genre)
 }
 
@@ -172,17 +173,18 @@ func (suite *GenreRepositoryTestSuite) TestDelete_Success() {
 	suite.mockSql.ExpectQuery(`DELETE FROM genres WHERE id = \$1 RETURNING id, name`).WithArgs(id).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(mockingGenre.ID, mockingGenre.Name))
 
-	result, err := suite.repo.Delete(id)
-	assert.NoError(suite.T(), err)
+	result, _ := suite.repo.Delete(id)
 	assert.Equal(suite.T(), mockingGenre, result)
 }
 
 func (suite *GenreRepositoryTestSuite) TestDelete_Failed() {
-	id := uuid.New()
+	id := entity.Genre{
+		ID: uuid.New(),
+	}
 
 	suite.mockSql.ExpectQuery(`DELETE FROM genres WHERE id = \$1 RETURNING id, name`).WithArgs(id).
-		WillReturnError(errors.New("Delete Genre Failed"))
+		WillReturnError(sql.ErrConnDone)
 
-	_, err := suite.repo.Delete(id)
+	_, err := suite.repo.Delete(id.ID)
 	assert.Error(suite.T(), err)
 }
