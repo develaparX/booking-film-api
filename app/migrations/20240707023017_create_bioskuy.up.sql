@@ -72,7 +72,7 @@ CREATE TABLE showtimes (
 
 CREATE TABLE seat_bookings (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
-    status seat_booking_status DEFAULT 'active' NOT NULL,
+    status seat_booking_status DEFAULT 'pending' NOT NULL,
     user_id UUID NOT NULL,
     showtime_id UUID NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id),
@@ -102,6 +102,7 @@ CREATE TABLE payments (
     seatdetailforbooking_id UUID NOT NULL,
     total_seat INT NOT NULL,
     total_price INT NOT NULL,
+    status payment_status DEFAULT 'unpaid' NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (seatdetailforbooking_id) REFERENCES seat_detail_for_bookings(id)
 );
