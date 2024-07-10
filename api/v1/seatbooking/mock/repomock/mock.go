@@ -16,14 +16,19 @@ type SeatBookingRepositoryMock struct {
 	mock.Mock
 }
 
-func (m *SeatBookingRepositoryMock) Save(ctx context.Context, tx *sql.Tx, seatbooking entity.SeatBooking, seat_id string, c *gin.Context) (entity.SeatBooking, error) {
-	args := m.Called(ctx, tx, seatbooking, seat_id, c)
+func (m *SeatBookingRepositoryMock) Save(ctx context.Context, tx *sql.Tx, seatbooking entity.SeatBooking, c *gin.Context) (entity.SeatBooking, error) {
+	args := m.Called(ctx, tx, seatbooking, c)
 	return args.Get(0).(entity.SeatBooking), args.Error(1)
 }
 
 func (m *SeatBookingRepositoryMock) FindByID(ctx context.Context, tx *sql.Tx, id string, c *gin.Context) (entity.SeatBooking, error) {
 	args := m.Called(ctx, tx, id, c)
 	return args.Get(0).(entity.SeatBooking), args.Error(1)
+}
+
+func (m *SeatBookingRepositoryMock) FindAllPendingByUserID(ctx context.Context, tx *sql.Tx, userID string, c *gin.Context) ([]entity.SeatBooking, error) {
+	args := m.Called(ctx, tx, userID, c)
+	return args.Get(0).([]entity.SeatBooking), args.Error(1)
 }
 
 func (m *SeatBookingRepositoryMock) FindAll(ctx context.Context, tx *sql.Tx, c *gin.Context) ([]entity.SeatBooking, error) {
@@ -34,6 +39,11 @@ func (m *SeatBookingRepositoryMock) FindAll(ctx context.Context, tx *sql.Tx, c *
 func (m *SeatBookingRepositoryMock) Delete(ctx context.Context, tx *sql.Tx, id string, c *gin.Context) error {
 	args := m.Called(ctx, tx, id, c)
 	return args.Error(0)
+}
+
+func (m *SeatBookingRepositoryMock) Update(ctx context.Context, tx *sql.Tx, payment entity.SeatBooking, c *gin.Context) (entity.SeatBooking, error) {
+	args := m.Called(ctx, tx, payment, c)
+	return args.Get(0).(entity.SeatBooking), args.Error(1)
 }
 
 type MockShowtimeRepository struct {

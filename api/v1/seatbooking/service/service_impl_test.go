@@ -59,7 +59,6 @@ func (suite *SeatBookingServiceTestSuite) TestCreate_Success() {
 
 	SeatBookingRequest.UserID = entitymock.MockSeatBookingEntity.ID
 	SeatBookingRequest.ShowtimeID = entitymock.MockSeatBookingRequest.ShowtimeID
-	SeatBookingRequest.Status = entitymock.MockSeatBookingRequest.Status
 
 	err := suite.validate.Struct(SeatBookingRequest)
 	assert.NoError(suite.T(), err)

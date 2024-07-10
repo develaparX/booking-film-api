@@ -49,7 +49,7 @@ func (suite *SeatBookingRepositoryTestSuite) TestSave_Success() {
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow("2"))
 
 	ginContext, _ := gin.CreateTestContext(nil)
-	savedSeatBooking, err := suite.repo.Save(context.Background(), tx, seatbooking, "seat1", ginContext)
+	savedSeatBooking, err := suite.repo.Save(context.Background(), tx, seatbooking, ginContext)
 	suite.NoError(err)
 	suite.Equal("1", savedSeatBooking.ID)
 
@@ -85,7 +85,7 @@ func (suite *SeatBookingRepositoryTestSuite) TestSave_RaceCondition() {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			_, err := suite.repo.Save(context.Background(), tx, seatbooking, "seat1", ginContext)
+			_, err := suite.repo.Save(context.Background(), tx, seatbooking, ginContext)
 			suite.NoError(err)
 		}()
 	}
@@ -112,7 +112,7 @@ func (suite *SeatBookingRepositoryTestSuite) TestSave_Error() {
 		WillReturnError(sql.ErrConnDone)
 
 	ginContext, _ := gin.CreateTestContext(nil)
-	_, err = suite.repo.Save(context.Background(), tx, seatBooking, seatBooking.SeatID, ginContext)
+	_, err = suite.repo.Save(context.Background(), tx, seatBooking, ginContext)
 	suite.Error(err)
 
 	suite.mockSql.ExpectRollback()

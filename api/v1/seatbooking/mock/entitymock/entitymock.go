@@ -37,7 +37,6 @@ var MockSeatBookingEntity = entity.SeatBooking{
 var MockSeatBookingRequest = dto.SeatBookingRequest{
 	SeatID:     "seat123",
 	ShowtimeID: "showtime456",
-	Status:     "booked",
 }
 
 var MockCreateSeatBookingRequest = dto.CreateSeatBookingRequest{
