@@ -1,0 +1,16 @@
+mode: set
+bioskuy/api/v1/seatbooking/controller/controller_impl.go:17.86,19.2 1 1
+bioskuy/api/v1/seatbooking/controller/controller_impl.go:21.63,26.16 4 1
+bioskuy/api/v1/seatbooking/controller/controller_impl.go:26.16,29.3 2 1
+bioskuy/api/v1/seatbooking/controller/controller_impl.go:31.2,34.16 3 1
+bioskuy/api/v1/seatbooking/controller/controller_impl.go:34.16,36.3 1 0
+bioskuy/api/v1/seatbooking/controller/controller_impl.go:38.2,43.38 2 0
+bioskuy/api/v1/seatbooking/controller/controller_impl.go:46.71,53.16 5 1
+bioskuy/api/v1/seatbooking/controller/controller_impl.go:53.16,56.3 2 1
+bioskuy/api/v1/seatbooking/controller/controller_impl.go:56.8,61.3 3 1
+bioskuy/api/v1/seatbooking/controller/controller_impl.go:64.70,68.16 3 1
+bioskuy/api/v1/seatbooking/controller/controller_impl.go:68.16,71.3 2 0
+bioskuy/api/v1/seatbooking/controller/controller_impl.go:73.2,78.33 2 1
+bioskuy/api/v1/seatbooking/controller/controller_impl.go:81.62,87.16 5 1
+bioskuy/api/v1/seatbooking/controller/controller_impl.go:87.16,91.3 2 0
+bioskuy/api/v1/seatbooking/controller/controller_impl.go:91.8,96.3 3 1
