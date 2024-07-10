@@ -15,7 +15,7 @@ import (
 )
 
 func StudioRoute(router *gin.Engine, validate *validator.Validate, db *sql.DB, config *helper.Config) {
-	
+
 	authService := auth.NewService(config)
 
 	seatRepo := repoSeat.NewSeatRepository()

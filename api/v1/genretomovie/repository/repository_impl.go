@@ -17,7 +17,7 @@ func NewGenreToMovieRepository() GenreToMovieRepository {
 	return &genretomovieRepository{}
 }
 
-func (r *genretomovieRepository) Save(ctx context.Context, tx *sql.Tx, GenreToMovie entity.GenreToMovie, c *gin.Context) (entity.GenreToMovie, error){
+func (r *genretomovieRepository) Save(ctx context.Context, tx *sql.Tx, GenreToMovie entity.GenreToMovie, c *gin.Context) (entity.GenreToMovie, error) {
 	query := "INSERT INTO genre_to_movies (genre_id, movie_id) VALUES ($1, $2) RETURNING id"
 
 	err := tx.QueryRowContext(ctx, query, GenreToMovie.GenreID, GenreToMovie.MovieID).Scan(&GenreToMovie.ID)
@@ -41,7 +41,7 @@ func (r *genretomovieRepository) FindByID(ctx context.Context, tx *sql.Tx, id st
 	rows, err := tx.QueryContext(ctx, query, id)
 	if err != nil {
 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-		return  genretomovie, err
+		return genretomovie, err
 	}
 	defer rows.Close()
 
@@ -50,11 +50,11 @@ func (r *genretomovieRepository) FindByID(ctx context.Context, tx *sql.Tx, id st
 		                &genretomovie.MovieDescription, &genretomovie.MoviePrice, &genretomovie.MovieDuration, &genretomovie.MovieStatus)
 		if err != nil {
 			c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-			return  genretomovie, err
+			return genretomovie, err
 		}
 
 		return genretomovie, nil
-	}else{
+	} else {
 		return genretomovie, errors.New("genre to movie not found")
 	}
 }
@@ -70,7 +70,7 @@ func (r *genretomovieRepository) FindAll(ctx context.Context, tx *sql.Tx, c *gin
 	rows, err := tx.QueryContext(ctx, query)
 	if err != nil {
 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-		return  genretomovies, err
+		return genretomovies, err
 	}
 	defer rows.Close()
 
@@ -85,14 +85,14 @@ func (r *genretomovieRepository) FindAll(ctx context.Context, tx *sql.Tx, c *gin
 	return genretomovies, nil
 }
 
-func (r *genretomovieRepository) Delete(ctx context.Context, tx *sql.Tx, id string, c *gin.Context) error{
+func (r *genretomovieRepository) Delete(ctx context.Context, tx *sql.Tx, id string, c *gin.Context) error {
 	query := `DELETE FROM genre_to_movies WHERE id = $1`
 
 	_, err := tx.ExecContext(ctx, query, id)
 
 	if err != nil {
 		c.Error(exception.InternalServerError{Message: err.Error()}).SetType(gin.ErrorTypePublic)
-		return  err
+		return err
 	}
 
 	return nil

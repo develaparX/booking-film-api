@@ -72,7 +72,7 @@ CREATE TABLE showtimes (
 
 CREATE TABLE seat_bookings (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
-    status seat_booking_status DEFAULT 'active' NOT NULL,
+    status seat_booking_status DEFAULT 'pending' NOT NULL,
     user_id UUID NOT NULL,
     showtime_id UUID NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id),
@@ -95,24 +95,23 @@ CREATE TABLE genre_to_movies (
     FOREIGN KEY (movie_id) REFERENCES movies(id)
 );
 
+-- Modified payments table
 CREATE TABLE payments (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
-    title VARCHAR NOT NULL,
+    user_id UUID NOT NULL,
+    seatdetailforbooking_id UUID NOT NULL,
+    total_seat INT NOT NULL,
+    total_price INT NOT NULL,
     status payment_status DEFAULT 'unpaid' NOT NULL,
-    price INT NOT NULL,
-    duration INT NOT NULL,
-    studio_name VARCHAR NOT NULL,
-    show_start TIMESTAMP,
-    show_end TIMESTAMP,
-    total_seat INT,
-    total_price INT,
-    seatbooking_id UUID,
-    transaction_token UUID,
-    FOREIGN KEY (seatbooking_id) REFERENCES seat_bookings(id)
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (seatdetailforbooking_id) REFERENCES seat_detail_for_bookings(id)
 );
 
+-- Modified payments_history table
 CREATE TABLE payments_history (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+    user_id UUID NOT NULL,
+    seatdetailforbooking_id UUID NOT NULL,
     title VARCHAR NOT NULL,
     status payment_status DEFAULT 'unpaid' NOT NULL,
     price INT NOT NULL,
@@ -120,8 +119,8 @@ CREATE TABLE payments_history (
     studio_name VARCHAR NOT NULL,
     show_start TIMESTAMP,
     show_end TIMESTAMP,
-    total_seat INT,
-    total_price INT,
-    seatbooking_id UUID,
-    FOREIGN KEY (seatbooking_id) REFERENCES seat_bookings(id)
+    total_seat INT NOT NULL,
+    total_price INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (seatdetailforbooking_id) REFERENCES seat_detail_for_bookings(id)
 );

@@ -9,7 +9,6 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type movieControllerImpl struct {
@@ -81,11 +80,8 @@ func (ctrl *movieControllerImpl) GetMovie(c *gin.Context) {
 
 func (ctrl *movieControllerImpl) UpdateMovie(c *gin.Context) {
 
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
-		return
-	}
+	id := c.Param("id")
+
 	var updateDTO dto.UpdateMovieDTO
 	if err := c.ShouldBindJSON(&updateDTO); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -108,8 +104,8 @@ func (ctrl *movieControllerImpl) UpdateMovie(c *gin.Context) {
 }
 
 func (ctrl *movieControllerImpl) DeleteMovie(c *gin.Context) {
-	id  := c.Param("id")
-	
+	id := c.Param("id")
+
 	deletedMovie, err := ctrl.Service.DeleteMovie(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

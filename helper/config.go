@@ -19,6 +19,7 @@ type Config struct {
 	DurationJWT string
 	GOOGLE_CLIENT_ID string
 	GOOGLE_CLIENT_SECRET string
+	MIDTRANS_SERVER_KEY string
 }
 
 func NewConfig( c *gin.Context) *Config {
@@ -38,5 +39,6 @@ func NewConfig( c *gin.Context) *Config {
 		DurationJWT: os.Getenv("DURATION_JWT"),
 		GOOGLE_CLIENT_ID: os.Getenv("GOOGLE_CLIENT_ID"),
 		GOOGLE_CLIENT_SECRET: os.Getenv("GOOGLE_CLIENT_SECRET"),
+		MIDTRANS_SERVER_KEY: os.Getenv("MIDTRANS_SERVER_KEY"),
 	}
 }
