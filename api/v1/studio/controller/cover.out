@@ -1,0 +1,21 @@
+mode: set
+bioskuy/api/v1/studio/controller/controller_impl.go:17.80,19.2 1 1
+bioskuy/api/v1/studio/controller/controller_impl.go:21.65,27.16 4 1
+bioskuy/api/v1/studio/controller/controller_impl.go:27.16,30.3 2 1
+bioskuy/api/v1/studio/controller/controller_impl.go:32.2,33.16 2 1
+bioskuy/api/v1/studio/controller/controller_impl.go:33.16,35.3 1 0
+bioskuy/api/v1/studio/controller/controller_impl.go:37.2,42.38 2 0
+bioskuy/api/v1/studio/controller/controller_impl.go:45.65,52.16 5 1
+bioskuy/api/v1/studio/controller/controller_impl.go:52.16,55.3 2 1
+bioskuy/api/v1/studio/controller/controller_impl.go:55.8,60.3 3 1
+bioskuy/api/v1/studio/controller/controller_impl.go:63.65,67.19 3 1
+bioskuy/api/v1/studio/controller/controller_impl.go:67.19,70.6 2 0
+bioskuy/api/v1/studio/controller/controller_impl.go:72.5,77.36 2 1
+bioskuy/api/v1/studio/controller/controller_impl.go:80.57,87.16 5 1
+bioskuy/api/v1/studio/controller/controller_impl.go:87.16,90.3 2 1
+bioskuy/api/v1/studio/controller/controller_impl.go:92.2,95.16 3 1
+bioskuy/api/v1/studio/controller/controller_impl.go:95.16,98.3 2 1
+bioskuy/api/v1/studio/controller/controller_impl.go:100.2,105.33 2 1
+bioskuy/api/v1/studio/controller/controller_impl.go:108.57,114.16 5 1
+bioskuy/api/v1/studio/controller/controller_impl.go:114.16,118.3 2 1
+bioskuy/api/v1/studio/controller/controller_impl.go:118.8,123.3 3 1
