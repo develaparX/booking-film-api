@@ -1,29 +1,37 @@
 version: '3.8'
 
 services:
-  app:
-    build: .
-    ports:
-      - "8080:8080"
-    depends_on:
-      - db
-    environment:
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASSWORD=12345678
-      - DB_NAME=bioskuy_test
-
   db:
-    image: postgres:13-alpine
+    image: postgres
+    container_name: postgres
+    restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 12345678
-      POSTGRES_DB: bioskuy_test
+      POSTGRES_DB: bioskuy
     ports:
       - "5432:5432"
-    volumes:
-      - db_data:/var/lib/postgresql/data
+    networks:
+      - my_network
 
-volumes:
-  db_data:
+  app:
+    build: .
+    container_name: golang_app
+    ports:
+      - "3000:3000"
+    environment:
+      DB_USER: postgres
+      DB_PASSWORD: 12345678
+      DB_HOST: db
+      DB_NAME: bioskuy_test
+      DB_PORT: 5432
+      DRIVER_NAME: postgres
+    depends_on:
+      - db
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
+
